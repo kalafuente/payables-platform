@@ -1,26 +1,243 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * ─── FONT MAPPING ──────────────────────────────────────────────────────────────
+ * Maps the Next.js Geist Sans variable (set on <html> in layout.tsx)
+ * to Tailwind's --font-sans token, making `font-sans` use Geist.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*
+ * ─── DESIGN TOKENS ─────────────────────────────────────────────────────────────
+ * Defined with Tailwind v4's @theme directive. Each token here generates
+ * both a CSS custom property and the corresponding Tailwind utility classes.
+ *
+ * Naming conventions:
+ *   --color-*      → bg-*, text-*, border-*, etc.
+ *   --text-*       → text-* (font-size + line-height)
+ *   --radius-*     → rounded-*
+ *   --shadow-*     → shadow-*
+ */
+@theme {
+
+  /* ─── COLOR: RAW PALETTE ─────────────────────────────────────────────────────
+   * Foundational color scale. Reference through semantic tokens below —
+   * do not use raw palette tokens directly in components.
+   */
+
+  /* Slate — neutral foundation */
+  --color-slate-50:  #F8FAFC;
+  --color-slate-100: #F1F5F9;
+  --color-slate-200: #E2E8F0;
+  --color-slate-300: #CBD5E1;
+  --color-slate-400: #94A3B8;
+  --color-slate-500: #64748B;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+  --color-slate-950: #020617;
+
+  /* Indigo — primary brand action */
+  --color-indigo-50:  #EEF2FF;
+  --color-indigo-100: #E0E7FF;
+  --color-indigo-200: #C7D2FE;
+  --color-indigo-300: #A5B4FC;
+  --color-indigo-500: #6366F1;
+  --color-indigo-600: #4F46E5;
+  --color-indigo-700: #4338CA;
+  --color-indigo-800: #3730A3;
+
+  /* Amber — pending / warning */
+  --color-amber-50:  #FFFBEB;
+  --color-amber-100: #FEF3C7;
+  --color-amber-500: #F59E0B;
+  --color-amber-600: #D97706;
+  --color-amber-700: #B45309;
+
+  /* Emerald — approved */
+  --color-emerald-50:  #ECFDF5;
+  --color-emerald-100: #D1FAE5;
+  --color-emerald-500: #10B981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+
+  /* Blue — scheduled */
+  --color-blue-50:  #EFF6FF;
+  --color-blue-100: #DBEAFE;
+  --color-blue-500: #3B82F6;
+  --color-blue-600: #2563EB;
+  --color-blue-700: #1D4ED8;
+
+  /* Green — paid */
+  --color-green-50:  #F0FDF4;
+  --color-green-100: #DCFCE7;
+  --color-green-500: #22C55E;
+  --color-green-600: #16A34A;
+  --color-green-700: #15803D;
+
+  /* Rose — overdue / danger */
+  --color-rose-50:  #FFF1F2;
+  --color-rose-100: #FFE4E6;
+  --color-rose-500: #F43F5E;
+  --color-rose-600: #E11D48;
+  --color-rose-700: #BE123C;
+  --color-rose-800: #9F1239;
+
+  /* ─── COLOR: SEMANTIC — BACKGROUNDS ─────────────────────────────────────────── */
+
+  --color-canvas:         var(--color-slate-50);  /* page background       */
+  --color-surface:        #FFFFFF;                 /* card / panel          */
+  --color-surface-raised: #FFFFFF;                 /* dropdown / modal      */
+
+  /* ─── COLOR: SEMANTIC — BORDERS ─────────────────────────────────────────────── */
+
+  --color-line:       var(--color-slate-200);      /* default divider / border  */
+  --color-line-strong: var(--color-slate-300);     /* emphasized border          */
+
+  /* ─── COLOR: SEMANTIC — TEXT ─────────────────────────────────────────────────── */
+
+  --color-ink:          var(--color-slate-900);    /* primary text     */
+  --color-ink-muted:    var(--color-slate-500);    /* secondary text   */
+  --color-ink-subtle:   var(--color-slate-400);    /* placeholder / hint */
+  --color-ink-disabled: var(--color-slate-300);    /* disabled state   */
+
+  /* ─── COLOR: SEMANTIC — PRIMARY ─────────────────────────────────────────────── */
+
+  --color-primary:            var(--color-indigo-600);
+  --color-primary-hover:      var(--color-indigo-700);
+  --color-primary-subtle:     var(--color-indigo-50);
+  --color-primary-emphasis:   var(--color-indigo-800);
+  --color-primary-foreground: #FFFFFF;
+
+  /* ─── COLOR: SEMANTIC — DANGER ──────────────────────────────────────────────── */
+
+  --color-danger:            var(--color-rose-600);
+  --color-danger-hover:      var(--color-rose-700);
+  --color-danger-subtle:     var(--color-rose-50);
+  --color-danger-foreground: #FFFFFF;
+
+  /* ─── COLOR: SEMANTIC — BILL STATUS ─────────────────────────────────────────── */
+
+  /* Usage: bg-draft-bg text-draft, bg-pending-bg text-pending, etc. */
+
+  --color-draft:       var(--color-slate-600);
+  --color-draft-bg:    var(--color-slate-100);
+
+  --color-pending:     var(--color-amber-700);
+  --color-pending-bg:  var(--color-amber-50);
+
+  --color-approved:    var(--color-emerald-700);
+  --color-approved-bg: var(--color-emerald-50);
+
+  --color-scheduled:    var(--color-blue-700);
+  --color-scheduled-bg: var(--color-blue-50);
+
+  --color-paid:        var(--color-green-700);
+  --color-paid-bg:     var(--color-green-50);
+
+  --color-overdue:     var(--color-rose-700);
+  --color-overdue-bg:  var(--color-rose-50);
+
+  /* ─── TYPOGRAPHY ─────────────────────────────────────────────────────────────── */
+
+  /* Additional size below Tailwind's `text-xs` (12px) floor */
+  --text-2xs:              0.6875rem;  /* 11px */
+  --text-2xs--line-height: 1rem;       /* 16px */
+
+  /* Tailwind's defaults (xs→5xl) are kept as-is.
+     `text-sm` (14px) is the default body size for this product. */
+
+  /* Named weights for semantic intent */
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  /* Monospace stack for amounts, codes, IDs */
+  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro',
+               Menlo, Consolas, monospace;
+
+  /* ─── BORDER RADIUS ──────────────────────────────────────────────────────────── */
+
+  --radius-xs:   0.125rem;   /* 2px  — tight accent / indicator    */
+  --radius-sm:   0.25rem;    /* 4px  — badge, tag                  */
+  --radius:      0.375rem;   /* 6px  — button, input (default)     */
+  --radius-md:   0.375rem;   /* 6px  — alias of default            */
+  --radius-lg:   0.5rem;     /* 8px  — card, panel                 */
+  --radius-xl:   0.75rem;    /* 12px — modal, sheet                */
+  --radius-2xl:  1rem;       /* 16px — large surface               */
+  --radius-full: 9999px;     /* pill — avatar, status dot          */
+
+  /* ─── SHADOWS ────────────────────────────────────────────────────────────────── */
+
+  /* Intentionally soft — enterprise SaaS aesthetic avoids heavy shadows */
+
+  /* Focus ring / input hover */
+  --shadow-xs:
+    0 1px 2px 0 rgb(0 0 0 / 0.04);
+
+  /* Card / panel elevation */
+  --shadow-sm:
+    0 1px 3px 0 rgb(0 0 0 / 0.06),
+    0 1px 2px -1px rgb(0 0 0 / 0.04);
+
+  /* Dropdown / popover */
+  --shadow-md:
+    0 4px 6px -1px rgb(0 0 0 / 0.06),
+    0 2px 4px -2px rgb(0 0 0 / 0.04);
+
+  /* Sheet / drawer */
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.07),
+    0 4px 6px  -4px rgb(0 0 0 / 0.04);
+
+  /* Modal */
+  --shadow-xl:
+    0 20px 25px  -5px rgb(0 0 0 / 0.08),
+    0  8px 10px  -6px rgb(0 0 0 / 0.04);
 }
 
+/*
+ * ─── MOTION TOKENS ─────────────────────────────────────────────────────────────
+ * CSS custom properties for transition-based animations (non-Framer Motion).
+ * Kept in :root (not @theme) — these inform CSS transitions directly
+ * rather than generating Tailwind utility classes.
+ *
+ * Framer Motion constants live in lib/motion.ts.
+ */
+:root {
+  /* Durations */
+  --duration-instant: 50ms;    /* state swap, no perceptible motion     */
+  --duration-fast:    100ms;   /* hover state color changes             */
+  --duration-normal:  150ms;   /* standard UI transitions               */
+  --duration-slow:    250ms;   /* deliberate / multi-property           */
+  --duration-slower:  400ms;   /* page-level or cinematic              */
+
+  /* Easing curves */
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);       /* decelerate — enter */
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);       /* accelerate — exit  */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);     /* symmetric          */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* slight overshoot  */
+
+  /* Layout constants — not in @theme, no utility classes needed */
+  --sidebar-width:   240px;
+  --header-height:   56px;
+  --page-padding-x:  2rem;   /* 32px */
+  --page-padding-y:  2rem;   /* 32px */
+}
+
+/*
+ * ─── BASE STYLES ───────────────────────────────────────────────────────────────
+ */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.875rem;   /* 14px — default body size for information-dense UI */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
