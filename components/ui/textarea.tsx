@@ -3,24 +3,24 @@
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: boolean
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
   { className, error, ...props },
   ref,
 ) {
   return (
-    <input
+    <textarea
       ref={ref}
       aria-invalid={error || undefined}
       className={cn(
-        'h-9 w-full rounded-sm border bg-surface px-3 text-sm text-ink',
+        'min-h-[96px] w-full rounded-sm border bg-surface px-3 py-2 text-sm text-ink',
         'placeholder:text-ink-subtle',
         'focus:outline-none focus:ring-1',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        'transition-colors duration-100',
+        'resize-y transition-colors duration-100',
         error
           ? 'border-overdue focus:border-overdue focus:ring-overdue/30'
           : 'border-line focus:border-line-strong focus:ring-line-strong',
@@ -31,4 +31,4 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   )
 })
 
-Input.displayName = 'Input'
+Textarea.displayName = 'Textarea'

@@ -9,6 +9,11 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge, type BadgeVariant } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { FormField } from '@/components/ui/form-field'
 
 // ── Local layout helpers ───────────────────────────────────────────────────────
 
@@ -344,6 +349,221 @@ export default function DesignSystemPage() {
               </table>
             </Card>
           </div>
+        </section>
+
+        {/* ── Form Components ─────────────────────────────────────────────────── */}
+        <section className="space-y-10">
+          <SectionHeader title="Form Components" />
+
+          {/* Label */}
+          <div className="space-y-2.5">
+            <p className="text-xs text-ink-subtle">Label</p>
+            <div className="flex flex-wrap items-center gap-6">
+              <Label>Default label</Label>
+              <Label required>Required label</Label>
+              <Label className="opacity-50 cursor-not-allowed">Disabled appearance</Label>
+            </div>
+          </div>
+
+          {/* Input */}
+          <div className="space-y-2.5">
+            <p className="text-xs text-ink-subtle">Input — states</p>
+            <div className="grid grid-cols-2 gap-3 max-w-lg">
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Default</p>
+                <Input placeholder="e.g. Stripe, Inc." />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Filled</p>
+                <Input defaultValue="Figma" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Error</p>
+                <Input error defaultValue="not-a-number" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Disabled</p>
+                <Input disabled defaultValue="Figma" />
+              </div>
+            </div>
+          </div>
+
+          {/* Select */}
+          <div className="space-y-2.5">
+            <p className="text-xs text-ink-subtle">Select — states</p>
+            <div className="grid grid-cols-2 gap-3 max-w-lg">
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Default (empty)</p>
+                <Select>
+                  <option value="" disabled>Select a category…</option>
+                  <option>Software</option>
+                  <option>Infrastructure</option>
+                  <option>Services</option>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">With value</p>
+                <Select defaultValue="software">
+                  <option value="software">Software</option>
+                  <option value="infrastructure">Infrastructure</option>
+                  <option value="services">Services</option>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Error</p>
+                <Select error>
+                  <option value="" disabled>Select a category…</option>
+                  <option>Software</option>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Disabled</p>
+                <Select disabled defaultValue="software">
+                  <option value="software">Software</option>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Textarea */}
+          <div className="space-y-2.5">
+            <p className="text-xs text-ink-subtle">Textarea — states</p>
+            <div className="grid grid-cols-2 gap-3 max-w-lg">
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Default</p>
+                <Textarea placeholder="Add notes for the reviewer…" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Filled</p>
+                <Textarea defaultValue={'Annual Figma license.\nCovers Q1–Q4 2026.'} />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Error</p>
+                <Textarea error placeholder="Add notes for the reviewer…" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-ink-subtle">Disabled</p>
+                <Textarea disabled defaultValue="Annual Figma license." />
+              </div>
+            </div>
+          </div>
+
+          {/* FormField */}
+          <div className="space-y-2.5">
+            <p className="text-xs text-ink-subtle">FormField — composition patterns</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-5 max-w-lg">
+              <FormField label="Vendor" htmlFor="ds-vendor">
+                <Input id="ds-vendor" placeholder="e.g. Stripe, Inc." />
+              </FormField>
+
+              <FormField
+                label="Invoice number"
+                htmlFor="ds-invoice"
+                required
+                description="Printed at the top of the invoice."
+              >
+                <Input id="ds-invoice" placeholder="INV-2026-001" />
+              </FormField>
+
+              <FormField
+                label="Amount"
+                htmlFor="ds-amount"
+                error="Please enter a valid amount."
+              >
+                <Input id="ds-amount" error defaultValue="not-a-number" />
+              </FormField>
+
+              <FormField
+                label="Category"
+                htmlFor="ds-category"
+                description="Used for reporting and budgets."
+              >
+                <Select id="ds-category" defaultValue="software">
+                  <option value="software">Software</option>
+                  <option value="infrastructure">Infrastructure</option>
+                  <option value="services">Services</option>
+                </Select>
+              </FormField>
+
+              <FormField
+                label="Notes"
+                htmlFor="ds-notes"
+                className="col-span-2"
+                description="Optional context for the reviewer."
+              >
+                <Textarea id="ds-notes" placeholder="Add any additional context…" />
+              </FormField>
+            </div>
+          </div>
+
+          {/* FormField in a realistic card context */}
+          <div className="space-y-2.5">
+            <p className="text-xs text-ink-subtle">FormField in context — bill create form section</p>
+            <Card className="max-w-2xl p-6">
+              <h3 className="text-sm font-semibold text-ink mb-5">Invoice details</h3>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+                <FormField label="Vendor name" htmlFor="ctx-vendor" required>
+                  <Input id="ctx-vendor" placeholder="e.g. Stripe, Inc." />
+                </FormField>
+
+                <FormField
+                  label="Invoice number"
+                  htmlFor="ctx-invoice"
+                  required
+                  description="As it appears on the document."
+                >
+                  <Input id="ctx-invoice" placeholder="INV-2026-001" />
+                </FormField>
+
+                <FormField label="Invoice date" htmlFor="ctx-date" required>
+                  <Input id="ctx-date" type="date" />
+                </FormField>
+
+                <FormField label="Due date" htmlFor="ctx-due" required>
+                  <Input id="ctx-due" type="date" />
+                </FormField>
+
+                <FormField
+                  label="Amount"
+                  htmlFor="ctx-amount"
+                  required
+                  error="Please enter a valid amount."
+                >
+                  <Input id="ctx-amount" error placeholder="0.00" />
+                </FormField>
+
+                <FormField
+                  label="Category"
+                  htmlFor="ctx-cat"
+                  description="For budget allocation."
+                >
+                  <Select id="ctx-cat">
+                    <option value="" disabled>Select…</option>
+                    <option>Software</option>
+                    <option>Infrastructure</option>
+                    <option>Professional Services</option>
+                    <option>Marketing</option>
+                    <option>Other</option>
+                  </Select>
+                </FormField>
+
+                <FormField
+                  label="Notes"
+                  htmlFor="ctx-notes"
+                  className="col-span-2"
+                  description="Optional. Visible to approvers during review."
+                >
+                  <Textarea id="ctx-notes" placeholder="Add context that will help the approver…" />
+                </FormField>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2 border-t border-line pt-5">
+                <Button variant="secondary">Cancel</Button>
+                <Button variant="primary">Submit for Approval</Button>
+              </div>
+            </Card>
+          </div>
+
         </section>
 
       </div>
