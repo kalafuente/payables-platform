@@ -240,9 +240,33 @@ const ACTIVITY: Record<string, ActivityEntry[]> = {
   ],
 }
 
+// In-memory store for client-created bills (cleared on page reload).
+// Replaced by a Prisma write when the DB is wired up.
+const CREATED_DETAILS: Record<string, { lineItems: LineItem[]; activity: ActivityEntry[] }> = {}
+
+let _nextBillId = MOCK_BILLS.length + 1
+
+export function generateBillId(): string {
+  return String(_nextBillId++)
+}
+
+export function addBill(
+  bill: Bill,
+  lineItems: LineItem[],
+  activity: ActivityEntry[],
+): void {
+  MOCK_BILLS.unshift(bill)
+  CREATED_DETAILS[bill.id] = { lineItems, activity }
+}
+
 export function getBillDetail(id: string): BillDetail | null {
   const bill = MOCK_BILLS.find(b => b.id === id)
   if (!bill) return null
+
+  if (CREATED_DETAILS[id]) {
+    return { ...bill, ...CREATED_DETAILS[id] }
+  }
+
   return {
     ...bill,
     lineItems: LINE_ITEMS[id] ?? [],

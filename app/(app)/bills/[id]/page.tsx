@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { MOCK_BILLS, getBillDetail } from '@/lib/mock-bills'
 import { BillSummary } from '@/components/bills/detail/bill-summary'
 import { LineItemsCard } from '@/components/bills/detail/line-items-card'
@@ -47,7 +46,23 @@ export default async function BillDetailPage({
   const { id } = await params
   const bill = getBillDetail(id)
 
-  if (!bill) notFound()
+  if (!bill) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-sm font-medium text-ink">Bill not found</p>
+        <p className="mt-1 max-w-xs text-sm text-ink-muted">
+          This bill may have been created in the current session and is not yet
+          persisted. It will be available after a database is connected.
+        </p>
+        <Link
+          href="/bills"
+          className="mt-4 text-sm text-ink-muted hover:text-ink transition-colors duration-100 underline underline-offset-2"
+        >
+          Back to Bills
+        </Link>
+      </div>
+    )
+  }
 
   return (
     <div>
