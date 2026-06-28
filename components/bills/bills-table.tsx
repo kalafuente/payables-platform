@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   useReactTable,
   getCoreRowModel,
@@ -32,6 +33,7 @@ function SortIcon({ sorted }: { sorted: false | 'asc' | 'desc' }) {
 
 export function BillsTable({ bills }: BillsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
+  const router = useRouter()
 
   const table = useReactTable({
     data: bills,
@@ -86,6 +88,7 @@ export function BillsTable({ bills }: BillsTableProps) {
           {table.getRowModel().rows.map(row => (
             <tr
               key={row.id}
+              onClick={() => router.push(`/bills/${row.original.id}`)}
               className="border-b border-line last:border-0 hover:bg-slate-50 transition-colors duration-75 cursor-pointer"
             >
               {row.getVisibleCells().map(cell => (

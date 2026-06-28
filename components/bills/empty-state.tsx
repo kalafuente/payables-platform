@@ -1,5 +1,4 @@
-import { STATUS_LABELS } from './columns'
-import type { BillStatus } from '@/lib/mock-bills'
+import { STATUS_LABELS, type BillStatus } from '@/lib/mock-bills'
 
 interface EmptyStateProps {
   hasSearch: boolean

@@ -1,6 +1,7 @@
 import type { ColumnDef, RowData } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
-import type { Bill } from '@/lib/mock-bills'
+import { type Bill, STATUS_LABELS } from '@/lib/mock-bills'
+import { formatCurrency, formatDate } from '@/lib/format'
 
 // Extend TanStack column meta to carry per-column alignment
 declare module '@tanstack/react-table' {
@@ -8,32 +9,6 @@ declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
     align?: 'left' | 'center' | 'right'
   }
-}
-
-export const STATUS_LABELS: Record<Bill['status'], string> = {
-  draft:     'Draft',
-  pending:   'Pending Approval',
-  approved:  'Approved',
-  scheduled: 'Scheduled',
-  paid:      'Paid',
-  overdue:   'Overdue',
-}
-
-function formatCurrency(n: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(n)
-}
-
-function formatDate(iso: string) {
-  return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
 
 export const columns: ColumnDef<Bill>[] = [
