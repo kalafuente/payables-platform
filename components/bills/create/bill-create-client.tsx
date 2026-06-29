@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -10,13 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { FormField } from '@/components/ui/form-field'
 import { InvoiceUpload, type OCRResult } from './invoice-upload'
 import { LineItemsEditor, nextLineItemId, type LineItemDraft } from './line-items-editor'
-import {
-  addBill,
-  generateBillId,
-  type Bill,
-  type LineItem,
-  type ActivityEntry,
-} from '@/lib/mock-bills'
+import { createBill } from '@/app/actions'
 
 interface FormState {
   vendor: string
@@ -57,6 +51,7 @@ function initialLineItem(): LineItemDraft {
 
 export function BillCreateClient() {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [lineItems, setLineItems] = useState<LineItemDraft[]>([initialLineItem()])
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -83,12 +78,6 @@ export function BillCreateClient() {
     setErrors({})
   }
 
-  function computeTotal(): number {
-    return lineItems.reduce((sum, item) => {
-      return sum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0)
-    }, 0)
-  }
-
   function validate(): Record<string, string> {
     const errs: Record<string, string> = {}
     if (!form.vendor.trim()) errs.vendor = 'Vendor name is required.'
@@ -98,34 +87,20 @@ export function BillCreateClient() {
     return errs
   }
 
-  function buildBillPayload(id: string): { bill: Bill; lineItems: LineItem[]; activity: ActivityEntry[] } {
+  function buildInput(applyDefaults: boolean) {
     const today = new Date().toISOString().slice(0, 10)
-    const bill: Bill = {
-      id,
-      vendorName: form.vendor.trim() || 'Unnamed vendor',
-      invoiceNumber: form.invoiceNumber.trim() || `DRAFT-${id}`,
-      invoiceDate: form.invoiceDate || today,
-      dueDate: form.dueDate || today,
-      amount: computeTotal(),
-      status: 'draft',
+    return {
+      vendorName:    applyDefaults ? (form.vendor.trim() || 'Unnamed vendor') : form.vendor.trim(),
+      invoiceNumber: applyDefaults ? (form.invoiceNumber.trim() || `DRAFT-${Date.now()}`) : form.invoiceNumber.trim(),
+      invoiceDate:   form.invoiceDate || (applyDefaults ? today : ''),
+      dueDate:       form.dueDate || (applyDefaults ? today : ''),
+      memo:          form.memo.trim(),
+      lineItems:     lineItems.map(li => ({
+        description: li.description,
+        quantity:    parseFloat(li.quantity) || 0,
+        unitPrice:   parseFloat(li.unitPrice) || 0,
+      })),
     }
-    const convertedLineItems: LineItem[] = lineItems
-      .filter(item => item.description.trim())
-      .map((item, i) => ({
-        id: `${id}-li${i}`,
-        description: item.description.trim(),
-        quantity: parseFloat(item.quantity) || 1,
-        unitPrice: parseFloat(item.unitPrice) || 0,
-        amount: (parseFloat(item.quantity) || 1) * (parseFloat(item.unitPrice) || 0),
-      }))
-    const activity: ActivityEntry[] = [{
-      id: `${id}-a0`,
-      type: 'created',
-      label: 'Bill created',
-      actor: 'Karen L.',
-      date: today,
-    }]
-    return { bill, lineItems: convertedLineItems, activity }
   }
 
   function handleCreate() {
@@ -134,17 +109,15 @@ export function BillCreateClient() {
       setErrors(errs)
       return
     }
-    const id = generateBillId()
-    const { bill, lineItems: li, activity } = buildBillPayload(id)
-    addBill(bill, li, activity)
-    router.push('/bills')
+    startTransition(async () => {
+      await createBill(buildInput(false))
+    })
   }
 
   function handleSaveDraft() {
-    const id = generateBillId()
-    const { bill, lineItems: li, activity } = buildBillPayload(id)
-    addBill(bill, li, activity)
-    router.push('/bills')
+    startTransition(async () => {
+      await createBill(buildInput(true))
+    })
   }
 
   return (
@@ -181,6 +154,7 @@ export function BillCreateClient() {
                 onChange={e => setField('vendor', e.target.value)}
                 error={!!errors.vendor}
                 placeholder="e.g. Stripe, Inc."
+                disabled={isPending}
               />
             </FormField>
 
@@ -196,6 +170,7 @@ export function BillCreateClient() {
                 onChange={e => setField('invoiceNumber', e.target.value)}
                 error={!!errors.invoiceNumber}
                 placeholder="INV-2026-001"
+                disabled={isPending}
               />
             </FormField>
 
@@ -211,6 +186,7 @@ export function BillCreateClient() {
                 value={form.invoiceDate}
                 onChange={e => setField('invoiceDate', e.target.value)}
                 error={!!errors.invoiceDate}
+                disabled={isPending}
               />
             </FormField>
 
@@ -226,6 +202,7 @@ export function BillCreateClient() {
                 value={form.dueDate}
                 onChange={e => setField('dueDate', e.target.value)}
                 error={!!errors.dueDate}
+                disabled={isPending}
               />
             </FormField>
           </div>
@@ -246,20 +223,21 @@ export function BillCreateClient() {
               value={form.memo}
               onChange={e => setField('memo', e.target.value)}
               placeholder="Add context for the approver…"
+              disabled={isPending}
             />
           </FormField>
         </Card>
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-2 py-2">
-          <Button variant="ghost" onClick={() => router.push('/bills')}>
+          <Button variant="ghost" onClick={() => router.push('/bills')} disabled={isPending}>
             Cancel
           </Button>
-          <Button variant="secondary" onClick={handleSaveDraft}>
-            Save Draft
+          <Button variant="secondary" onClick={handleSaveDraft} disabled={isPending}>
+            {isPending ? 'Saving…' : 'Save Draft'}
           </Button>
-          <Button variant="primary" onClick={handleCreate}>
-            Create Bill
+          <Button variant="primary" onClick={handleCreate} disabled={isPending}>
+            {isPending ? 'Creating…' : 'Create Bill'}
           </Button>
         </div>
       </div>

@@ -143,7 +143,7 @@ export default async function BillDetailPage({
 
         {/* Action card: right column, spans all three rows, sticky */}
         <div className="lg:row-span-3 lg:self-start lg:sticky lg:top-8">
-          <ActionCard status={bill.status} dueDate={bill.dueDate} />
+          <ActionCard billId={bill.id} status={bill.status} dueDate={bill.dueDate} />
         </div>
 
         <LineItemsCard lineItems={bill.lineItems} total={bill.amount} />

@@ -1,11 +1,13 @@
 'use client'
 
+import { useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
 import { STATUS_LABELS, type BillStatus } from '@/lib/mock-bills'
+import { submitForApproval } from '@/app/actions'
 
 // ---------------------------------------------------------------------------
 // Bill Lifecycle
@@ -138,15 +140,26 @@ const ACTION_SETS: Record<BillStatus, ActionSet> = {
 // ---------------------------------------------------------------------------
 
 interface ActionCardProps {
+  billId: string
   status: BillStatus
   dueDate: string
 }
 
-export function ActionCard({ status, dueDate }: ActionCardProps) {
+export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
+  const [isPending, startTransition] = useTransition()
+
   const desc    = getDescription(status, dueDate)
   const actions = ACTION_SETS[status]
   const hasMainActions = actions.primary || actions.secondary
   const isOverdue = status === 'overdue'
+
+  function handlePrimary() {
+    if (status === 'draft') {
+      startTransition(() => submitForApproval(billId))
+      return
+    }
+    console.log(actions.primary)
+  }
 
   return (
     <Card className="overflow-hidden">
@@ -175,9 +188,10 @@ export function ActionCard({ status, dueDate }: ActionCardProps) {
               <Button
                 variant="primary"
                 fullWidth
-                onClick={() => console.log(actions.primary)}
+                onClick={handlePrimary}
+                disabled={isPending}
               >
-                {actions.primary}
+                {status === 'draft' && isPending ? 'Submitting…' : actions.primary}
               </Button>
             )}
             {actions.secondary && (
