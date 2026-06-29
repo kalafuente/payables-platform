@@ -1,14 +1,67 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { MOCK_BILLS, getBillDetail } from '@/lib/mock-bills'
+import { db } from '@/lib/db'
+import type { BillDetail, BillStatus } from '@/lib/mock-bills'
 import { BillSummary } from '@/components/bills/detail/bill-summary'
 import { LineItemsCard } from '@/components/bills/detail/line-items-card'
 import { ActivityCard } from '@/components/bills/detail/activity-card'
 import { ActionCard } from '@/components/bills/detail/action-card'
 
-export function generateStaticParams() {
-  return MOCK_BILLS.map(bill => ({ id: bill.id }))
-}
+export const dynamic = 'force-dynamic'
+
+// cache() deduplicates the DB round-trip when both generateMetadata and the
+// page component call this function with the same id in the same render pass.
+const getBillDetail = cache(async (id: string): Promise<BillDetail | null> => {
+  const row = await db.bill.findUnique({
+    where: { id },
+    select: {
+      id:            true,
+      invoiceNumber: true,
+      invoiceDate:   true,
+      dueDate:       true,
+      amount:        true,
+      status:        true,
+      vendor:        { select: { name: true } },
+      lineItems: {
+        select: {
+          id:          true,
+          description: true,
+          quantity:    true,
+          unitPrice:   true,
+          amount:      true,
+        },
+        orderBy: { sortOrder: 'asc' },
+      },
+    },
+  })
+
+  if (!row) return null
+
+  function toDateStr(value: Date | string): string {
+    if (value instanceof Date) return value.toISOString().slice(0, 10)
+    return String(value).slice(0, 10)
+  }
+
+  return {
+    id:            row.id,
+    vendorName:    row.vendor.name,
+    invoiceNumber: row.invoiceNumber,
+    invoiceDate:   toDateStr(row.invoiceDate),
+    dueDate:       toDateStr(row.dueDate),
+    amount:        Number(row.amount),
+    status:        row.status as BillStatus,
+    lineItems:     row.lineItems.map(li => ({
+      id:          li.id,
+      description: li.description,
+      quantity:    Number(li.quantity),
+      unitPrice:   Number(li.unitPrice),
+      amount:      Number(li.amount),
+    })),
+    // Activity model is not yet in the schema; renders as empty state.
+    activity: [],
+  }
+})
 
 export async function generateMetadata({
   params,
@@ -16,7 +69,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const bill = getBillDetail(id)
+  const bill = await getBillDetail(id)
   if (!bill) return { title: 'Bill not found — Payables' }
   return { title: `${bill.vendorName} ${bill.invoiceNumber} — Payables` }
 }
@@ -44,15 +97,14 @@ export default async function BillDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const bill = getBillDetail(id)
+  const bill = await getBillDetail(id)
 
   if (!bill) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <p className="text-sm font-medium text-ink">Bill not found</p>
         <p className="mt-1 max-w-xs text-sm text-ink-muted">
-          This bill may have been created in the current session and is not yet
-          persisted. It will be available after a database is connected.
+          This bill does not exist or may have been deleted.
         </p>
         <Link
           href="/bills"
