@@ -1,0 +1,118 @@
+// Prisma 7 — provider is "prisma-client", output is required.
+// Run `pnpm approve-builds` then `pnpm exec prisma generate` before using the client.
+// DATABASE_URL must be set in .env before running `prisma migrate dev`.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+// Matches the BillStatus union type in lib/mock-bills.ts exactly.
+// Lowercase values avoid a mapping layer when transitioning from mock data.
+enum BillStatus {
+  draft
+  pending
+  approved
+  scheduled
+  paid
+  overdue
+}
+
+// Not yet used in the UI but included per requirements.
+// ach covers most US B2B transfers; wire for large/international; check for legacy.
+enum PaymentMethod {
+  ach
+  wire
+  check
+}
+
+// ---------------------------------------------------------------------------
+// Models
+// ---------------------------------------------------------------------------
+
+// Vendors are first-class entities so multiple bills can reference the same
+// vendor without repeating name strings, and vendor-level queries become trivial.
+model Vendor {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  bills     Bill[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Bills List and Dashboard filter/search by vendor name.
+  @@index([name])
+}
+
+model Bill {
+  id            String         @id @default(cuid())
+  vendor        Vendor         @relation(fields: [vendorId], references: [id])
+  vendorId      String
+
+  // Invoice identity — both required by the UI and unique per vendor.
+  invoiceNumber String
+  invoiceDate   DateTime       @db.Date
+  dueDate       DateTime       @db.Date
+
+  // Stored total; updated whenever line items change.
+  // Decimal avoids floating-point rounding on monetary values.
+  amount        Decimal        @db.Decimal(12, 2)
+
+  status        BillStatus     @default(draft)
+
+  // Optional fields from the Create Bill form and payment flow.
+  memo          String?
+  paymentMethod PaymentMethod?
+  scheduledDate DateTime?      @db.Date
+  paidAt        DateTime?
+
+  lineItems     LineItem[]
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // A vendor cannot send the same invoice number twice.
+  @@unique([vendorId, invoiceNumber])
+
+  // Three high-frequency query patterns: join via vendorId, filter by
+  // status (Bills List tabs, Dashboard metrics), sort/filter by dueDate.
+  @@index([vendorId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model LineItem {
+  id          String   @id @default(cuid())
+
+  // Cascade delete: line items have no meaning without their parent bill.
+  bill        Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  billId      String
+
+  description String
+
+  // Decimal(10, 4) supports fractional quantities (hours, weight, etc.)
+  // without losing precision.
+  quantity    Decimal  @db.Decimal(10, 4)
+  unitPrice   Decimal  @db.Decimal(12, 2)
+
+  // Stored even though it equals quantity × unitPrice. Avoids recomputation
+  // in aggregate queries and preserves the value if unit price is later changed.
+  amount      Decimal  @db.Decimal(12, 2)
+
+  // Preserves the display order the specialist entered on the Create Bill form.
+  sortOrder   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  // All line item queries are scoped to a bill.
+  @@index([billId])
+}
