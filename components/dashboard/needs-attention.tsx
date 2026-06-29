@@ -3,7 +3,6 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { STATUS_LABELS, type Bill } from '@/lib/mock-bills'
-import { getOverdueBills, getApprovedBills, getDraftBills } from '@/lib/dashboard-data'
 
 function BillRow({ bill }: { bill: Bill }) {
   return (
@@ -35,11 +34,13 @@ function GroupHeader({ label, count }: { label: string; count: number }) {
   )
 }
 
-export function NeedsAttention() {
-  const overdue = getOverdueBills()
-  const approved = getApprovedBills()
-  const drafts = getDraftBills()
+interface NeedsAttentionProps {
+  overdue: Bill[]
+  approved: Bill[]
+  drafts: Bill[]
+}
 
+export function NeedsAttention({ overdue, approved, drafts }: NeedsAttentionProps) {
   const isEmpty = overdue.length === 0 && approved.length === 0 && drafts.length === 0
 
   return (

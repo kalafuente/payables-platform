@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
-import { getRecentActivity } from '@/lib/dashboard-data'
+import type { ActivityFeedEntry } from '@/lib/dashboard-data'
 import type { ActivityEntryType } from '@/lib/mock-bills'
 
 const DOT_COLOR: Record<ActivityEntryType, string> = {
@@ -14,9 +14,11 @@ const DOT_COLOR: Record<ActivityEntryType, string> = {
   paid:              'bg-paid',
 }
 
-export function RecentActivity() {
-  const entries = getRecentActivity(8)
+interface RecentActivityProps {
+  entries: ActivityFeedEntry[]
+}
 
+export function RecentActivity({ entries }: RecentActivityProps) {
   return (
     <Card>
       <div className="flex items-center justify-between px-5 py-4 border-b border-line">
