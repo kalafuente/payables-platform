@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { STATUS_LABELS, type Bill } from '@/lib/mock-bills'
 
 function BillRow({ bill }: { bill: Bill }) {
+  const isOverdue = bill.status === 'overdue'
   return (
     <Link
       href={`/bills/${bill.id}`}
@@ -17,17 +19,33 @@ function BillRow({ bill }: { bill: Bill }) {
       <span className="shrink-0 w-20 text-right text-sm tabular-nums text-ink-muted">
         {formatCurrency(bill.amount)}
       </span>
-      <span className="shrink-0 w-14 text-right text-xs text-ink-subtle">
+      <span className={cn(
+        'shrink-0 w-14 text-right text-xs tabular-nums',
+        isOverdue ? 'text-overdue' : 'text-ink-subtle',
+      )}>
         {formatDate(bill.dueDate)}
       </span>
     </Link>
   )
 }
 
-function GroupHeader({ label, count }: { label: string; count: number }) {
+interface GroupHeaderProps {
+  label:    string
+  count:    number
+  variant?: 'default' | 'urgent'
+}
+
+function GroupHeader({ label, count, variant = 'default' }: GroupHeaderProps) {
+  const isUrgent = variant === 'urgent'
   return (
-    <div className="px-5 py-2.5 border-b border-line bg-canvas">
-      <p className="text-2xs font-medium uppercase tracking-wide text-ink-muted">
+    <div className={cn(
+      'px-5 py-2.5 border-b border-line',
+      isUrgent ? 'bg-overdue-bg' : 'bg-canvas',
+    )}>
+      <p className={cn(
+        'text-2xs font-medium uppercase tracking-wide',
+        isUrgent ? 'text-overdue' : 'text-ink-muted',
+      )}>
         {label} · {count} {count === 1 ? 'bill' : 'bills'}
       </p>
     </div>
@@ -35,9 +53,9 @@ function GroupHeader({ label, count }: { label: string; count: number }) {
 }
 
 interface NeedsAttentionProps {
-  overdue: Bill[]
+  overdue:  Bill[]
   approved: Bill[]
-  drafts: Bill[]
+  drafts:   Bill[]
 }
 
 export function NeedsAttention({ overdue, approved, drafts }: NeedsAttentionProps) {
@@ -58,7 +76,7 @@ export function NeedsAttention({ overdue, approved, drafts }: NeedsAttentionProp
         <>
           {overdue.length > 0 && (
             <>
-              <GroupHeader label="Overdue" count={overdue.length} />
+              <GroupHeader label="Overdue" count={overdue.length} variant="urgent" />
               {overdue.map(b => <BillRow key={b.id} bill={b} />)}
             </>
           )}
@@ -72,7 +90,7 @@ export function NeedsAttention({ overdue, approved, drafts }: NeedsAttentionProp
 
           {drafts.length > 0 && (
             <>
-              <GroupHeader label="Drafts" count={drafts.length} />
+              <GroupHeader label="Awaiting Submission" count={drafts.length} />
               {drafts.map(b => <BillRow key={b.id} bill={b} />)}
             </>
           )}
