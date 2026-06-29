@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import {
   useReactTable,
   getCoreRowModel,
@@ -9,18 +10,27 @@ import {
   flexRender,
   type SortingState,
 } from '@tanstack/react-table'
-import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { Bill } from '@/lib/mock-bills'
 import { columns } from './columns'
 
-interface BillsTableProps {
-  bills: Bill[]
+// Column widths as percentages — shared between thead and tbody tables.
+// Vendor is intentionally narrower than content-fit to keep the table compact.
+const COL_WIDTHS = ['42%', '22%', '18%', '18%']
+
+function ColGroup() {
+  return (
+    <colgroup>
+      {COL_WIDTHS.map((w, i) => (
+        <col key={i} style={{ width: w }} />
+      ))}
+    </colgroup>
+  )
 }
 
 function SortIcon({ sorted }: { sorted: false | 'asc' | 'desc' }) {
   return (
-    <span className="ml-1 inline-flex flex-col gap-[2px] shrink-0" aria-hidden="true">
+    <span className="ml-1.5 inline-flex flex-col gap-[2px] shrink-0" aria-hidden="true">
       <svg viewBox="0 0 6 4" className={cn('size-[5px]', sorted === 'asc' ? 'text-ink' : 'text-ink-disabled')} fill="currentColor">
         <path d="M3 0L6 4H0z" />
       </svg>
@@ -31,7 +41,12 @@ function SortIcon({ sorted }: { sorted: false | 'asc' | 'desc' }) {
   )
 }
 
-export function BillsTable({ bills }: BillsTableProps) {
+interface BillsTableProps {
+  bills: Bill[]
+  animationKey: string
+}
+
+export function BillsTable({ bills, animationKey }: BillsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const router = useRouter()
 
@@ -45,9 +60,11 @@ export function BillsTable({ bills }: BillsTableProps) {
   })
 
   return (
-    <Card className="overflow-hidden">
-      <table className="w-full border-collapse">
-        <thead className="bg-slate-50 border-b border-line">
+    <div className="bg-surface overflow-hidden rounded-lg">
+      {/* Static header — never animates */}
+      <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+        <ColGroup />
+        <thead className="border-b border-line">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => {
@@ -59,17 +76,14 @@ export function BillsTable({ bills }: BillsTableProps) {
                   <th
                     key={header.id}
                     className={cn(
-                      'px-4 py-3 text-xs font-medium text-ink-muted',
+                      'px-5 py-2.5 text-xs font-medium text-ink-muted',
                       alignRight ? 'text-right' : 'text-left',
                     )}
                   >
                     {header.isPlaceholder ? null : canSort ? (
                       <button
                         onClick={header.column.getToggleSortingHandler()}
-                        className={cn(
-                          'inline-flex items-center cursor-pointer select-none group',
-                          alignRight && 'flex-row-reverse',
-                        )}
+                        className="inline-flex items-center cursor-pointer select-none"
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         <SortIcon sorted={sorted} />
@@ -83,29 +97,36 @@ export function BillsTable({ bills }: BillsTableProps) {
             </tr>
           ))}
         </thead>
+      </table>
 
+      {/* Animated rows — keyed per filter so rows replay enter animation on tab switch */}
+      <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+        <ColGroup />
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr
-              key={row.id}
+            <motion.tr
+              key={`${animationKey}-${row.id}`}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
               onClick={() => router.push(`/bills/${row.original.id}`)}
-              className="border-b border-line last:border-0 hover:bg-slate-50 transition-colors duration-75 cursor-pointer"
+              className="border-b border-line last:border-0 hover:bg-slate-100 transition-colors duration-75 cursor-pointer"
             >
               {row.getVisibleCells().map(cell => (
                 <td
                   key={cell.id}
                   className={cn(
-                    'px-4 py-3.5 text-sm',
+                    'px-5 py-3 text-sm',
                     cell.column.columnDef.meta?.align === 'right' && 'text-right',
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
-            </tr>
+            </motion.tr>
           ))}
         </tbody>
       </table>
-    </Card>
+    </div>
   )
 }

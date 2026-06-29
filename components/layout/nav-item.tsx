@@ -18,7 +18,7 @@ export function NavItem({ href, label, icon }: NavItemProps) {
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-2.5 px-3 h-8 rounded-sm text-sm transition-colors duration-100 cursor-pointer',
+        'flex items-center gap-2.5 px-3 h-9 rounded text-sm transition-colors duration-100 cursor-pointer',
         isActive
           ? 'bg-slate-100 text-ink font-medium'
           : 'text-ink-muted hover:bg-slate-100 hover:text-ink',

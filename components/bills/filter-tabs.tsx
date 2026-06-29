@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { BillStatus } from '@/lib/mock-bills'
 
@@ -33,12 +34,10 @@ export function FilterTabs({ active, counts, onChange }: FilterTabsProps) {
             key={value}
             onClick={() => onChange(value)}
             className={cn(
-              'inline-flex items-center gap-1.5 px-4 py-2.5 text-sm whitespace-nowrap',
+              'relative inline-flex items-center gap-1.5 px-3 py-2 text-sm whitespace-nowrap',
               'cursor-pointer transition-colors duration-100',
-              '-mb-px border-b-2',
-              isActive
-                ? 'text-ink font-medium border-primary'
-                : 'text-ink-muted border-transparent hover:text-ink',
+              '-mb-px',
+              isActive ? 'text-ink font-medium' : 'text-ink-muted hover:text-ink',
             )}
           >
             {label}
@@ -48,6 +47,14 @@ export function FilterTabs({ active, counts, onChange }: FilterTabsProps) {
             )}>
               {count}
             </span>
+
+            {isActive && (
+              <motion.span
+                layoutId="tab-indicator"
+                className="absolute inset-x-0 -bottom-px h-0.5 bg-primary"
+                transition={{ duration: 0.2, ease: [0, 0, 0.2, 1] }}
+              />
+            )}
           </button>
         )
       })}

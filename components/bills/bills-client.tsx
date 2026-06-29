@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import type { Bill, BillStatus } from '@/lib/mock-bills'
 import { FilterTabs, type FilterStatus } from './filter-tabs'
-import { SearchInput } from './search-input'
+import { SearchInput } from '@/components/ui/search-input'
 import { BillsTable } from './bills-table'
 import { EmptyState } from './empty-state'
 
@@ -35,18 +35,15 @@ export function BillsClient({ bills }: { bills: Bill[] }) {
   const isEmpty = filteredBills.length === 0
 
   return (
-    <div className="space-y-4">
+    <div>
       <FilterTabs
         active={filterStatus}
         counts={statusCounts}
         onChange={setFilterStatus}
       />
 
-      <div className="flex items-center justify-between gap-4">
-        <SearchInput value={search} onChange={setSearch} />
-        <p className="text-xs text-ink-subtle tabular-nums">
-          {filteredBills.length} {filteredBills.length === 1 ? 'bill' : 'bills'}
-        </p>
+      <div className="flex items-center justify-between p-4 gap-4 bg-surface-subtle border-b border-line">
+        <SearchInput value={search} onChange={setSearch} placeholder="Search vendor or invoice…" className="w-64" />
       </div>
 
       {isEmpty ? (
@@ -55,7 +52,7 @@ export function BillsClient({ bills }: { bills: Bill[] }) {
           filterStatus={filterStatus !== 'all' ? (filterStatus as BillStatus) : undefined}
         />
       ) : (
-        <BillsTable bills={filteredBills} />
+        <BillsTable bills={filteredBills} animationKey={filterStatus} />
       )}
     </div>
   )

@@ -22,6 +22,10 @@
  */
 @theme {
 
+  --text-display: 3rem;
+  --text-display--line-height: 3.5rem;
+  --text-display--letter-spacing: -0.03em;
+
   /* ─── COLOR: RAW PALETTE ───────────────────────────────────────────────────── */
 
   /* Neutral */
@@ -47,9 +51,9 @@
 
   /* Status colors (soft & desaturated) */
 
-  --color-amber-50: #F8F2DE;
-  --color-amber-100: #F2E7C1;
-  --color-amber-600: #7C6420;
+  --color-amber-50: #F7F5E6;
+  --color-amber-100: #EEE7C8;
+  --color-amber-600: #876634;
 
   --color-green-50: #EDF6EE;
   --color-green-100: #DCECDD;
@@ -59,14 +63,16 @@
   --color-blue-100: #DCE9F6;
   --color-blue-600: #4A6F94;
 
-  --color-red-50: #F8ECEC;
-  --color-red-100: #F3DEDE;
-  --color-red-600: #8C5555;
+  --color-red-50: rgb(255, 248, 244);
+  --color-red-100: #F8ECEC;
+  --color-red-600: #B74018;
   /* ─── COLOR: SEMANTIC — BACKGROUNDS ───────────────────────── */
 
   --color-canvas: var(--color-slate-50);
   --color-surface: #FFFFFF;
   --color-surface-raised: #FFFFFF;
+  --color-surface-subtle: var(--color-slate-100);
+  --color-sidebar: rgb(244, 242, 240);
 
   /* ─── BORDERS ─────────────────────────────────────────────── */
 
@@ -233,12 +239,25 @@
 /*
  * ─── BASE STYLES ───────────────────────────────────────────────────────────────
  */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+/*
+ * Root font size: 18px (+12.5% over browser default 16px).
+ * All rem-based Tailwind utilities (spacing, type, radii, control heights)
+ * scale proportionally. Pixel-based layout dimensions (sidebar, header) are unaffected.
+ */
+html {
+  font-size: 18px;
+}
+
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: 0.875rem;
-  /* 14px — default body size for information-dense UI */
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

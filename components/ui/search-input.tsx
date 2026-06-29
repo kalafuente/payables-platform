@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils'
 interface SearchInputProps {
   value: string
   onChange: (value: string) => void
+  placeholder?: string
+  className?: string
 }
 
 function SearchIcon() {
@@ -24,9 +26,9 @@ function ClearIcon() {
   )
 }
 
-export function SearchInput({ value, onChange }: SearchInputProps) {
+export function SearchInput({ value, onChange, placeholder = 'Search…', className }: SearchInputProps) {
   return (
-    <div className="relative w-64">
+    <div className={cn('relative', className)}>
       <span className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-ink-subtle">
         <SearchIcon />
       </span>
@@ -35,9 +37,9 @@ export function SearchInput({ value, onChange }: SearchInputProps) {
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
-        placeholder="Search vendor or invoice…"
+        placeholder={placeholder}
         className={cn(
-          'h-8 w-full rounded-sm border border-line bg-surface text-sm text-ink',
+          'h-8 w-full rounded-full border border-line bg-surface text-sm text-ink',
           'pl-8 pr-8',
           'placeholder:text-ink-subtle',
           'focus:outline-none focus:border-line-strong focus:ring-1 focus:ring-line-strong',

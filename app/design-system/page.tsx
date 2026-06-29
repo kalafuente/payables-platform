@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { FormField } from '@/components/ui/form-field'
+import { SearchInput } from '@/components/ui/search-input'
+import { VendorAvatar } from '@/components/ui/vendor-avatar'
 
 // ── Local layout helpers ───────────────────────────────────────────────────────
 
@@ -46,6 +48,18 @@ function Group({
       </div>
     </div>
   )
+}
+
+// ── Search demos ──────────────────────────────────────────────────────────────
+
+function SearchDemo() {
+  const [value, setValue] = useState('')
+  return <SearchInput value={value} onChange={setValue} placeholder="Search vendor or invoice…" className="w-64" />
+}
+
+function SearchNarrowDemo() {
+  const [value, setValue] = useState('')
+  return <SearchInput value={value} onChange={setValue} placeholder="Search…" className="w-40" />
 }
 
 // ── Loading state demos ────────────────────────────────────────────────────────
@@ -564,6 +578,63 @@ export default function DesignSystemPage() {
             </Card>
           </div>
 
+        </section>
+
+        {/* ── VendorAvatar ────────────────────────────────────────────────────── */}
+        <section className="space-y-8">
+          <SectionHeader title="VendorAvatar" />
+
+          <Group label="Palette — deterministic by name">
+            {['Stripe, Inc.', 'Amazon Web Services', 'Figma', 'Vercel', 'Notion'].map(name => (
+              <div key={name} className="flex items-center gap-2.5">
+                <VendorAvatar name={name} />
+                <span className="text-sm text-ink-muted">{name}</span>
+              </div>
+            ))}
+          </Group>
+
+          <Group label="Sizes">
+            <VendorAvatar name="Stripe, Inc." size={28} />
+            <VendorAvatar name="Stripe, Inc." size={36} />
+            <VendorAvatar name="Stripe, Inc." size={44} />
+          </Group>
+
+          <Group label="In context — table row" align="start">
+            <div className="w-full max-w-2xl divide-y divide-line border border-line rounded-lg overflow-hidden">
+              {[
+                { name: 'Stripe, Inc.', invoice: 'INV-0834', amount: '$11,500.00' },
+                { name: 'Amazon Web Services', invoice: 'INV-0833', amount: '$8,240.00' },
+                { name: 'Figma', invoice: 'INV-0832', amount: '$6,000.00' },
+              ].map(row => (
+                <div key={row.invoice} className="flex items-center gap-3 px-4 py-3 bg-surface">
+                  <VendorAvatar name={row.name} />
+                  <span className="flex-1 text-sm font-medium text-ink">{row.name}</span>
+                  <span className="text-sm font-mono text-ink-muted">{row.invoice}</span>
+                  <span className="w-24 text-right text-sm font-mono tabular-nums text-ink">{row.amount}</span>
+                </div>
+              ))}
+            </div>
+          </Group>
+        </section>
+
+        {/* ── SearchInput ─────────────────────────────────────────────────────── */}
+        <section className="space-y-8">
+          <SectionHeader title="SearchInput" />
+
+          <Group label="Default (w-64)">
+            <SearchDemo />
+          </Group>
+
+          <Group label="Narrow (w-40)">
+            <SearchNarrowDemo />
+          </Group>
+
+          <Group label="In context — bills list toolbar" align="start">
+            <div className="flex items-center justify-between w-full max-w-2xl bg-surface border border-line rounded-lg px-5 py-3.5">
+              <p className="text-sm font-semibold text-ink">Bills</p>
+              <SearchInput value="" onChange={() => {}} placeholder="Search vendor or invoice…" className="w-64" />
+            </div>
+          </Group>
         </section>
 
       </div>

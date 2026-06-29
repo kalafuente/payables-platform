@@ -1,5 +1,6 @@
 import type { ColumnDef, RowData } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
+import { VendorAvatar } from '@/components/ui/vendor-avatar'
 import { type Bill, STATUS_LABELS } from '@/lib/mock-bills'
 import { formatCurrency, formatDate } from '@/lib/format'
 
@@ -16,15 +17,26 @@ export const columns: ColumnDef<Bill>[] = [
     accessorKey: 'vendorName',
     header: 'Vendor',
     cell: ({ row }) => (
-      <span className="font-medium text-ink">{row.original.vendorName}</span>
+      <div className="flex items-center gap-3">
+        <VendorAvatar name={row.original.vendorName} />
+        <div className="min-w-0">
+          <p className="font-medium text-ink truncate">{row.original.vendorName}</p>
+          <p className="text-xs text-ink-subtle truncate">
+            {row.original.invoiceNumber} · {formatDate(row.original.invoiceDate)}
+          </p>
+        </div>
+      </div>
     ),
   },
   {
-    accessorKey: 'invoiceNumber',
-    header: 'Invoice',
+    accessorKey: 'status',
+    header: 'Status',
     cell: ({ row }) => (
-      <span className="font-mono text-ink-muted">{row.original.invoiceNumber}</span>
+      <Badge variant={row.original.status}>
+        {STATUS_LABELS[row.original.status]}
+      </Badge>
     ),
+    enableSorting: false,
   },
   {
     accessorKey: 'amount',
@@ -38,7 +50,7 @@ export const columns: ColumnDef<Bill>[] = [
   },
   {
     accessorKey: 'dueDate',
-    header: 'Due',
+    header: 'Due date',
     cell: ({ row }) => {
       const isOverdue = row.original.status === 'overdue'
       return (
@@ -47,15 +59,5 @@ export const columns: ColumnDef<Bill>[] = [
         </span>
       )
     },
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <Badge variant={row.original.status}>
-        {STATUS_LABELS[row.original.status]}
-      </Badge>
-    ),
-    enableSorting: false,
   },
 ]

@@ -33,7 +33,7 @@ const navigation = [
 
 export function Sidebar() {
   return (
-    <aside className="w-[var(--sidebar-width)] flex flex-col bg-surface border-r border-line shrink-0">
+    <aside className="w-[var(--sidebar-width)] flex flex-col bg-sidebar border-r border-line shrink-0">
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 h-[var(--header-height)] border-b border-line shrink-0">
         <div className="size-5 bg-primary rounded-xs shrink-0" />
