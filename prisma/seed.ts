@@ -14,13 +14,21 @@ const prisma = new PrismaClient({ adapter })
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Status = 'draft' | 'pending' | 'approved' | 'scheduled' | 'paid' | 'overdue'
-type Method = 'ach' | 'wire' | 'check'
+type Status       = 'draft' | 'pending' | 'approved' | 'scheduled' | 'paid' | 'overdue'
+type Method       = 'ach' | 'wire' | 'check'
+type ActivityType = 'created' | 'updated' | 'submitted' | 'approved' | 'changes_requested' | 'scheduled' | 'paid'
 
 interface LineItemDef {
   description: string
   quantity: number
   unitPrice: number
+}
+
+interface ActivityEntryData {
+  type:      ActivityType
+  label:     string
+  actor:     string
+  createdAt: Date
 }
 
 interface BillDef {
@@ -47,6 +55,55 @@ function isoToDate(iso: string): Date {
 function totalAmount(items: LineItemDef[]): string {
   const sum = items.reduce((acc, li) => acc + Math.round(li.quantity * li.unitPrice * 100), 0)
   return (sum / 100).toFixed(2)
+}
+
+// Add a number of calendar days to a Date (returns a new Date)
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date)
+  d.setUTCDate(d.getUTCDate() + days)
+  return d
+}
+
+// Set the time-of-day on a Date (UTC) and return a new Date
+function atHour(date: Date, hour: number, minute = 0): Date {
+  const d = new Date(date)
+  d.setUTCHours(hour, minute, 0, 0)
+  return d
+}
+
+const ACTOR = 'Karen L.'
+
+// Build a realistic activity timeline for a bill based on its final status.
+// Timestamps are anchored to the invoice date and progress in chronological order.
+function buildActivityEntries(bill: BillDef): ActivityEntryData[] {
+  const base    = isoToDate(bill.invoiceDate)
+  const entries: ActivityEntryData[] = []
+
+  // Every bill starts with a "created" entry on the invoice date.
+  entries.push({ type: 'created', label: 'Bill created', actor: ACTOR, createdAt: atHour(base, 9) })
+  if (bill.status === 'draft') return entries
+
+  // Submitted a few days after the invoice arrived.
+  const submittedAt = atHour(addDays(base, 3), 14)
+  entries.push({ type: 'submitted', label: 'Submitted for approval', actor: ACTOR, createdAt: submittedAt })
+  if (bill.status === 'pending' || bill.status === 'overdue') return entries
+
+  // Approved two days after submission.
+  const approvedAt = atHour(addDays(submittedAt, 2), 11)
+  entries.push({ type: 'approved', label: 'Approved', actor: ACTOR, createdAt: approvedAt })
+  if (bill.status === 'approved') return entries
+
+  // Payment scheduled the following day.
+  const scheduledAt = atHour(addDays(approvedAt, 1), 15, 30)
+  entries.push({ type: 'scheduled', label: 'Payment scheduled', actor: ACTOR, createdAt: scheduledAt })
+  if (bill.status === 'scheduled') return entries
+
+  // Paid — use the bill's paidAt date so it matches the stored field.
+  if (bill.paidAt) {
+    entries.push({ type: 'paid', label: 'Bill paid', actor: ACTOR, createdAt: atHour(bill.paidAt, 16) })
+  }
+
+  return entries
 }
 
 // ── Vendor catalogue ──────────────────────────────────────────────────────────
@@ -728,6 +785,11 @@ async function main() {
                 })),
               },
             },
+            activityEntries: {
+              createMany: {
+                data: buildActivityEntries(bill),
+              },
+            },
           })),
         },
       },
@@ -737,10 +799,11 @@ async function main() {
   }
 
   // Summary
-  const [vendors, bills, lineItems] = await Promise.all([
+  const [vendors, bills, lineItems, activityEntries] = await Promise.all([
     prisma.vendor.count(),
     prisma.bill.count(),
     prisma.lineItem.count(),
+    prisma.activityEntry.count(),
   ])
 
   const byStatus = await prisma.bill.groupBy({
@@ -750,7 +813,7 @@ async function main() {
   })
 
   console.log(`\nSeed complete`)
-  console.log(`  ${vendors} vendors · ${bills} bills · ${lineItems} line items`)
+  console.log(`  ${vendors} vendors · ${bills} bills · ${lineItems} line items · ${activityEntries} activity entries`)
   console.log('\nStatus distribution:')
   for (const row of byStatus) {
     console.log(`  ${row.status.padEnd(10)} ${row._count._all}`)

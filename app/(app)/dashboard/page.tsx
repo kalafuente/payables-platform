@@ -6,7 +6,8 @@ import { NeedsAttention } from '@/components/dashboard/needs-attention'
 import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { db } from '@/lib/db'
 import { formatCurrency } from '@/lib/format'
-import type { Bill, BillStatus } from '@/lib/mock-bills'
+import type { Bill, BillStatus, ActivityEntryType } from '@/lib/mock-bills'
+import type { ActivityFeedEntry } from '@/lib/dashboard-data'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Dashboard — Payables' }
@@ -17,7 +18,7 @@ function toDateStr(value: Date | string): string {
 }
 
 export default async function DashboardPage() {
-  const [statusGroups, attentionRows] = await Promise.all([
+  const [statusGroups, attentionRows, activityRows] = await Promise.all([
     // One groupBy covers all four metric cards.
     db.bill.groupBy({
       by: ['status'],
@@ -37,6 +38,20 @@ export default async function DashboardPage() {
         vendor:        { select: { name: true } },
       },
       orderBy: { dueDate: 'asc' },
+    }),
+    // Recent Activity feed: newest 8 entries across all bills.
+    db.activityEntry.findMany({
+      take: 8,
+      select: {
+        id:        true,
+        type:      true,
+        label:     true,
+        actor:     true,
+        createdAt: true,
+        billId:    true,
+        bill:      { select: { vendor: { select: { name: true } } } },
+      },
+      orderBy: { createdAt: 'desc' },
     }),
   ])
 
@@ -76,6 +91,18 @@ export default async function DashboardPage() {
   const approvedBills = attentionBills.filter(b => b.status === 'approved')
   const draftBills    = attentionBills.filter(b => b.status === 'draft')
 
+  const recentActivity: ActivityFeedEntry[] = activityRows.map(a => ({
+    id:         a.id,
+    type:       a.type as ActivityEntryType,
+    label:      a.label,
+    actor:      a.actor,
+    date:       a.createdAt instanceof Date
+      ? a.createdAt.toISOString().slice(0, 10)
+      : String(a.createdAt).slice(0, 10),
+    billId:     a.billId,
+    vendorName: a.bill.vendor.name,
+  }))
+
   return (
     <>
       <PageHeader
@@ -110,7 +137,7 @@ export default async function DashboardPage() {
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr]">
         <NeedsAttention overdue={overdueBills} approved={approvedBills} drafts={draftBills} />
-        <RecentActivity entries={[]} />
+        <RecentActivity entries={recentActivity} />
       </div>
     </>
   )

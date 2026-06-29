@@ -35,6 +35,7 @@ export interface LineItem {
 
 export type ActivityEntryType =
   | 'created'
+  | 'updated'
   | 'submitted'
   | 'approved'
   | 'changes_requested'

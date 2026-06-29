@@ -2,7 +2,7 @@ import { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { db } from '@/lib/db'
-import type { BillDetail, BillStatus } from '@/lib/mock-bills'
+import type { BillDetail, BillStatus, ActivityEntryType } from '@/lib/mock-bills'
 import { BillSummary } from '@/components/bills/detail/bill-summary'
 import { LineItemsCard } from '@/components/bills/detail/line-items-card'
 import { ActivityCard } from '@/components/bills/detail/activity-card'
@@ -33,6 +33,16 @@ const getBillDetail = cache(async (id: string): Promise<BillDetail | null> => {
         },
         orderBy: { sortOrder: 'asc' },
       },
+      activityEntries: {
+        select: {
+          id:        true,
+          type:      true,
+          label:     true,
+          actor:     true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      },
     },
   })
 
@@ -51,15 +61,22 @@ const getBillDetail = cache(async (id: string): Promise<BillDetail | null> => {
     dueDate:       toDateStr(row.dueDate),
     amount:        Number(row.amount),
     status:        row.status as BillStatus,
-    lineItems:     row.lineItems.map(li => ({
+    lineItems: row.lineItems.map(li => ({
       id:          li.id,
       description: li.description,
       quantity:    Number(li.quantity),
       unitPrice:   Number(li.unitPrice),
       amount:      Number(li.amount),
     })),
-    // Activity model is not yet in the schema; renders as empty state.
-    activity: [],
+    activity: row.activityEntries.map(a => ({
+      id:    a.id,
+      type:  a.type as ActivityEntryType,
+      label: a.label,
+      actor: a.actor,
+      date:  a.createdAt instanceof Date
+        ? a.createdAt.toISOString().slice(0, 10)
+        : String(a.createdAt).slice(0, 10),
+    })),
   }
 })
 

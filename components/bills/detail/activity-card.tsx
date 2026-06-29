@@ -5,6 +5,7 @@ import type { ActivityEntry, ActivityEntryType } from '@/lib/mock-bills'
 
 const DOT_COLOR: Record<ActivityEntryType, string> = {
   created:           'bg-ink-disabled',
+  updated:           'bg-ink-disabled',
   submitted:         'bg-pending',
   approved:          'bg-approved',
   changes_requested: 'bg-pending',

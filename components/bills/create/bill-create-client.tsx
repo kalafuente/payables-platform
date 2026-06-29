@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { FormField } from '@/components/ui/form-field'
 import { InvoiceUpload, type OCRResult } from './invoice-upload'
 import { LineItemsEditor, nextLineItemId, type LineItemDraft } from './line-items-editor'
-import { createBill } from '@/app/actions'
+import { createBill, updateBill } from '@/app/actions'
 
 interface FormState {
   vendor: string
@@ -18,6 +18,21 @@ interface FormState {
   invoiceDate: string
   dueDate: string
   memo: string
+}
+
+export interface BillInitialValues {
+  vendor: string
+  invoiceNumber: string
+  invoiceDate: string
+  dueDate: string
+  memo: string
+  lineItems: LineItemDraft[]
+}
+
+interface BillCreateClientProps {
+  // When provided, the component operates in edit mode.
+  billId?: string
+  initialValues?: BillInitialValues
 }
 
 const EMPTY_FORM: FormState = {
@@ -49,12 +64,32 @@ function initialLineItem(): LineItemDraft {
   return { id: nextLineItemId(), description: '', quantity: '1', unitPrice: '' }
 }
 
-export function BillCreateClient() {
+export function BillCreateClient({ billId, initialValues }: BillCreateClientProps = {}) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [form, setForm] = useState<FormState>(EMPTY_FORM)
-  const [lineItems, setLineItems] = useState<LineItemDraft[]>([initialLineItem()])
+  const isEditMode = !!billId
+
+  const [form, setForm] = useState<FormState>(
+    initialValues
+      ? {
+          vendor:        initialValues.vendor,
+          invoiceNumber: initialValues.invoiceNumber,
+          invoiceDate:   initialValues.invoiceDate,
+          dueDate:       initialValues.dueDate,
+          memo:          initialValues.memo,
+        }
+      : EMPTY_FORM
+  )
+
+  const [lineItems, setLineItems] = useState<LineItemDraft[]>(
+    initialValues?.lineItems.length
+      ? initialValues.lineItems
+      : [initialLineItem()]
+  )
+
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const cancelHref = isEditMode ? `/bills/${billId}` : '/bills'
 
   function setField(field: keyof FormState, value: string) {
     setForm(f => ({ ...f, [field]: value }))
@@ -103,14 +138,18 @@ export function BillCreateClient() {
     }
   }
 
-  function handleCreate() {
+  function handleSave() {
     const errs = validate()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
     }
     startTransition(async () => {
-      await createBill(buildInput(false))
+      if (isEditMode) {
+        await updateBill(billId!, buildInput(false))
+      } else {
+        await createBill(buildInput(false))
+      }
     })
   }
 
@@ -123,20 +162,22 @@ export function BillCreateClient() {
   return (
     <div>
       <Link
-        href="/bills"
+        href={cancelHref}
         className="group mb-6 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100"
       >
         <span className="transition-transform duration-100 group-hover:-translate-x-0.5">
           <ChevronLeft />
         </span>
-        Bills
+        {isEditMode ? 'Bill' : 'Bills'}
       </Link>
 
-      <h1 className="mb-6 text-xl font-semibold text-ink">Create Bill</h1>
+      <h1 className="mb-6 text-xl font-semibold text-ink">
+        {isEditMode ? 'Edit Bill' : 'Create Bill'}
+      </h1>
 
       <div className="space-y-4">
-        {/* Invoice upload */}
-        <InvoiceUpload onExtracted={handleExtracted} />
+        {/* OCR upload — only available when creating a new bill */}
+        {!isEditMode && <InvoiceUpload onExtracted={handleExtracted} />}
 
         {/* Invoice details */}
         <Card className="p-6">
@@ -230,14 +271,18 @@ export function BillCreateClient() {
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-2 py-2">
-          <Button variant="ghost" onClick={() => router.push('/bills')} disabled={isPending}>
+          <Button variant="ghost" onClick={() => router.push(cancelHref)} disabled={isPending}>
             Cancel
           </Button>
-          <Button variant="secondary" onClick={handleSaveDraft} disabled={isPending}>
-            {isPending ? 'Saving…' : 'Save Draft'}
-          </Button>
-          <Button variant="primary" onClick={handleCreate} disabled={isPending}>
-            {isPending ? 'Creating…' : 'Create Bill'}
+          {!isEditMode && (
+            <Button variant="secondary" onClick={handleSaveDraft} disabled={isPending}>
+              {isPending ? 'Saving…' : 'Save Draft'}
+            </Button>
+          )}
+          <Button variant="primary" onClick={handleSave} disabled={isPending}>
+            {isPending
+              ? (isEditMode ? 'Saving…' : 'Creating…')
+              : (isEditMode ? 'Save Changes' : 'Create Bill')}
           </Button>
         </div>
       </div>

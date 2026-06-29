@@ -34,6 +34,17 @@ enum PaymentMethod {
   check
 }
 
+// Mirrors the ActivityEntryType union in lib/mock-bills.ts exactly.
+enum ActivityType {
+  created
+  updated
+  submitted
+  approved
+  changes_requested
+  scheduled
+  paid
+}
+
 // ---------------------------------------------------------------------------
 // Models
 // ---------------------------------------------------------------------------
@@ -74,7 +85,8 @@ model Bill {
   scheduledDate DateTime?      @db.Date
   paidAt        DateTime?
 
-  lineItems     LineItem[]
+  lineItems       LineItem[]
+  activityEntries ActivityEntry[]
 
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -114,4 +126,19 @@ model LineItem {
 
   // All line item queries are scoped to a bill.
   @@index([billId])
+}
+
+model ActivityEntry {
+  id        String       @id @default(cuid())
+  bill      Bill         @relation(fields: [billId], references: [id], onDelete: Cascade)
+  billId    String
+  type      ActivityType
+  label     String
+  actor     String
+
+  // Used for ordering the activity timeline (newest first).
+  createdAt DateTime     @default(now())
+
+  @@index([billId])
+  @@index([createdAt])
 }

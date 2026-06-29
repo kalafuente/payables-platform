@@ -1,13 +1,14 @@
 'use client'
 
 import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
 import { STATUS_LABELS, type BillStatus } from '@/lib/mock-bills'
-import { submitForApproval } from '@/app/actions'
+import { submitForApproval, approveBill } from '@/app/actions'
 
 // ---------------------------------------------------------------------------
 // Bill Lifecycle
@@ -146,6 +147,7 @@ interface ActionCardProps {
 }
 
 export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   const desc    = getDescription(status, dueDate)
@@ -158,7 +160,19 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
       startTransition(() => submitForApproval(billId))
       return
     }
+    if (status === 'pending' || status === 'overdue') {
+      startTransition(() => approveBill(billId))
+      return
+    }
     console.log(actions.primary)
+  }
+
+  function handleSecondary() {
+    if (status === 'draft') {
+      router.push(`/bills/${billId}/edit`)
+      return
+    }
+    console.log(actions.secondary)
   }
 
   return (
@@ -191,14 +205,18 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
                 onClick={handlePrimary}
                 disabled={isPending}
               >
-                {status === 'draft' && isPending ? 'Submitting…' : actions.primary}
+                {status === 'draft' && isPending
+                  ? 'Submitting…'
+                  : (status === 'pending' || status === 'overdue') && isPending
+                    ? 'Approving…'
+                    : actions.primary}
               </Button>
             )}
             {actions.secondary && (
               <Button
                 variant="secondary"
                 fullWidth
-                onClick={() => console.log(actions.secondary)}
+                onClick={handleSecondary}
               >
                 {actions.secondary}
               </Button>
