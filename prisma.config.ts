@@ -1,7 +1,9 @@
+import { existsSync } from 'node:fs'
 import { defineConfig, env } from 'prisma/config'
 
-// Prisma 7 evaluates this file before loading .env, so we load it explicitly.
-process.loadEnvFile()
+if (existsSync('.env')) {
+  process.loadEnvFile()
+}
 
 export default defineConfig({
   datasource: {
