@@ -1,6 +1,6 @@
 ## Payables Platform
 
-A polished Accounts Payable MVP built as a take-home assignment for a Design Engineer role. The goal is product quality and clean engineering rather than feature completeness — a focused tool that reflects how AP specialists actually work, not a feature checklist.
+A polished Accounts Payable MVP built as a take-home assignment for a Design Engineer role. The goal is product quality and clean engineering rather than feature completeness — a focused tool that reflects how Accounts Payable (AP) specialists actually work, not a feature checklist.
 
 ## Live Demo
 
