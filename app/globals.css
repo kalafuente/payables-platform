@@ -124,8 +124,8 @@
   --color-paid: var(--color-green-600);
   --color-paid-bg: var(--color-green-100);
 
-  --color-overdue: var(--color-red-600);
-  --color-overdue-bg: var(--color-red-50);
+  --color-overdue: var(--color-danger);
+  --color-overdue-bg: var(--color-danger-subtle);
 
   /* ─── TYPOGRAPHY ─────────────────────────────────────────────────────────────── */
 

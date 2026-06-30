@@ -6,7 +6,7 @@ function PageHeaderSkeleton() {
   return (
     <div className="flex items-start justify-between gap-4 mb-5">
       <div>
-        <Skeleton className="h-12 w-36 rounded-lg" />
+        <Skeleton className="h-12 w-36 " />
         <Skeleton className="mt-2 h-3.5 w-48 rounded" />
       </div>
       <Skeleton className="h-9 w-28 rounded" />
@@ -18,7 +18,7 @@ function PageHeaderSkeleton() {
 
 function MetricCardSkeleton() {
   return (
-    <div className="rounded-sm border border-line bg-surface p-5">
+    <div className="border border-line bg-surface p-5">
       <Skeleton className="h-2.5 w-20 rounded" />
       <Skeleton className="mt-3 h-7 w-16 rounded" />
       <Skeleton className="mt-2 h-3.5 w-28 rounded" />
@@ -49,7 +49,7 @@ function GroupHeaderSkeleton() {
 
 function NeedsAttentionSkeleton() {
   return (
-    <div className="bg-surface border border-line rounded-lg overflow-hidden">
+    <div className="bg-surface border border-line  overflow-hidden">
       <div className="px-5 py-4 border-b border-line">
         <Skeleton className="h-4 w-40 rounded" />
       </div>
@@ -78,7 +78,7 @@ function PaymentRowSkeleton() {
 
 function UpcomingPaymentsSkeleton() {
   return (
-    <div className="bg-surface border border-line rounded-lg overflow-hidden">
+    <div className="bg-surface border border-line  overflow-hidden">
       <div className="px-5 py-3.5 border-b border-line">
         <Skeleton className="h-4 w-36 rounded" />
       </div>
@@ -106,7 +106,7 @@ function ActivityRowSkeleton() {
 
 function RecentActivitySkeleton() {
   return (
-    <div className="bg-surface border border-line rounded-lg overflow-hidden">
+    <div className="bg-surface border border-line  overflow-hidden">
       <div className="px-5 py-3.5 border-b border-line">
         <Skeleton className="h-4 w-28 rounded" />
       </div>

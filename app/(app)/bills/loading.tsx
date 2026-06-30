@@ -19,7 +19,7 @@ function TableRowSkeleton() {
       {/* Vendor — avatar + two-line text */}
       <td className="px-5 py-3">
         <div className="flex items-center gap-3">
-          <Skeleton className="size-9 rounded-lg shrink-0" />
+          <Skeleton className="size-9  shrink-0" />
           <div className="flex-1 min-w-0 space-y-1.5">
             <Skeleton className="h-3.5 w-32 rounded" />
             <Skeleton className="h-3 w-24 rounded" />
@@ -48,14 +48,14 @@ export default function BillsLoading() {
       {/* Page header */}
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
-          <Skeleton className="h-12 w-20 rounded-lg" />
+          <Skeleton className="h-12 w-20 " />
           <Skeleton className="mt-2 h-3.5 w-52 rounded" />
         </div>
         <Skeleton className="h-9 w-28 rounded" />
       </div>
 
       {/* Card: tabs + search + table */}
-      <div className="bg-surface border border-line rounded-lg overflow-hidden">
+      <div className="bg-surface border border-line  overflow-hidden">
 
         {/* Filter tabs skeleton */}
         <div className="flex items-end gap-1 px-2 pt-1 border-b border-line">

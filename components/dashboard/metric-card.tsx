@@ -12,7 +12,7 @@ export function MetricCard({ label, value, detail, variant = 'default' }: Metric
   return (
     <div
       className={cn(
-        'rounded-sm border p-5',
+        'border p-5',
         isOverdue ? 'bg-overdue-bg border-overdue/20' : 'bg-surface border-line',
       )}
     >

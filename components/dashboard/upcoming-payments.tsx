@@ -17,8 +17,8 @@ interface UpcomingPaymentsProps {
 export function UpcomingPayments({ bills }: UpcomingPaymentsProps) {
   return (
     <Card>
-      <div className="px-5 py-3.5 border-b border-line">
-        <h2 className="text-sm font-medium text-ink">Upcoming Payments</h2>
+      <div className="px-5 py-3 border-b border-line">
+        <h2 className="text-sm font-medium text-ink-muted">Upcoming Payments</h2>
       </div>
 
       {bills.length === 0 ? (
@@ -31,12 +31,12 @@ export function UpcomingPayments({ bills }: UpcomingPaymentsProps) {
             <Link
               key={bill.id}
               href={`/bills/${bill.id}`}
-              className="flex items-center gap-3 px-5 py-3 border-b border-line last:border-b-0 hover:bg-canvas transition-colors duration-100"
+              className="flex items-center gap-4 px-5 py-3 border-b border-line last:border-b-0 hover:bg-canvas transition-colors duration-100"
             >
-              <span className="flex-1 min-w-0 text-sm font-medium text-ink truncate">
+              <span className="flex-1 min-w-0 text-sm text-ink truncate">
                 {bill.vendorName}
               </span>
-              <span className="shrink-0 text-xs text-ink-subtle tabular-nums">
+              <span className="shrink-0 w-24 text-right text-xs text-ink-subtle tabular-nums">
                 {formatDate(bill.scheduledDate)}
               </span>
               <span className="shrink-0 w-20 text-right text-sm tabular-nums text-ink-muted">
