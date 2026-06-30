@@ -43,7 +43,7 @@ export function BillsClient({ bills }: { bills: Bill[] }) {
       />
 
       <div className="flex items-center justify-between p-4 gap-4 bg-surface-subtle border-b border-line">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search vendor or invoice…" className="w-64" />
+        <SearchInput value={search} onChange={setSearch} placeholder="Search vendor or invoice…" className="w-full sm:w-64" />
       </div>
 
       {isEmpty ? (

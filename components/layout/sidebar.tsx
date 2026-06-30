@@ -1,3 +1,6 @@
+'use client'
+
+import { cn } from '@/lib/utils'
 import { NavItem } from './nav-item'
 
 // ── Icons ──────────────────────────────────────────────────────────────────────
@@ -31,9 +34,23 @@ const navigation = [
 
 // ── Sidebar ────────────────────────────────────────────────────────────────────
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean
+}
+
+export function Sidebar({ isOpen = false }: SidebarProps) {
   return (
-    <aside className="w-[var(--sidebar-width)] flex flex-col bg-sidebar border-r border-line shrink-0">
+    <aside
+      className={cn(
+        'w-[var(--sidebar-width)] flex flex-col bg-sidebar border-r border-line shrink-0',
+        // Small screens: fixed overlay that slides in/out from the left.
+        // z-50 places it above the z-40 backdrop.
+        'fixed inset-y-0 left-0 z-50 transition-transform duration-200 ease-in-out',
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+        // Large screens: restore to normal flow, always visible.
+        'lg:relative lg:translate-x-0',
+      )}
+    >
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 h-[var(--header-height)] shrink-0">
         <div className="size-5 bg-primary rounded-xs shrink-0" />

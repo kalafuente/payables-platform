@@ -24,7 +24,7 @@ const TABS: { value: FilterStatus; label: string }[] = [
 
 export function FilterTabs({ active, counts, onChange }: FilterTabsProps) {
   return (
-    <div className="flex items-end gap-0 border-b border-line">
+    <div className="flex items-end gap-0 border-b border-line overflow-x-auto scrollbar-none">
       {TABS.map(({ value, label }) => {
         const isActive = active === value
         const count = counts[value] ?? 0

@@ -61,6 +61,11 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
 
   return (
     <div className="bg-surface overflow-hidden rounded-lg">
+      {/* overflow-x-auto lets the table scroll on narrow viewports instead of
+          compressing columns. min-w ensures column percentages stay meaningful. */}
+      <div className="overflow-x-auto">
+      <div className="min-w-[600px]">
+
       {/* Static header — never animates */}
       <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
         <ColGroup />
@@ -127,6 +132,9 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
           ))}
         </tbody>
       </table>
+
+      </div>
+      </div>
     </div>
   )
 }
