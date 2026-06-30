@@ -11,6 +11,7 @@ interface FilterTabsProps {
   active: FilterStatus
   counts: Record<string, number>
   onChange: (status: FilterStatus) => void
+  className?: string
 }
 
 const TABS: { value: FilterStatus; label: string }[] = [
@@ -23,7 +24,7 @@ const TABS: { value: FilterStatus; label: string }[] = [
   { value: 'overdue', label: 'Overdue' },
 ]
 
-export function FilterTabs({ active, counts, onChange }: FilterTabsProps) {
+export function FilterTabs({ active, counts, onChange, className }: FilterTabsProps) {
   const listRef = useRef<HTMLDivElement>(null)
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -51,7 +52,7 @@ export function FilterTabs({ active, counts, onChange }: FilterTabsProps) {
       role="tablist"
       aria-label="Filter bills by status"
       onKeyDown={handleKeyDown}
-      className="flex items-end gap-0 border-b border-line overflow-x-auto scrollbar-none"
+      className={cn('flex items-end gap-0 border-b border-line overflow-x-auto scrollbar-none', className)}
     >
       {TABS.map(({ value, label }) => {
         const isActive = active === value
@@ -67,7 +68,7 @@ export function FilterTabs({ active, counts, onChange }: FilterTabsProps) {
             className={cn(
               'relative inline-flex items-center gap-1.5 px-3 py-2 text-sm whitespace-nowrap',
               'cursor-pointer transition-colors duration-100',
-              'pb-1',
+              'pb-3',
               isActive ? 'text-ink font-medium' : 'text-ink-muted hover:text-ink',
             )}
           >

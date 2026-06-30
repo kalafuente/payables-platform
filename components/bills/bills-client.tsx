@@ -36,13 +36,16 @@ export function BillsClient({ bills }: { bills: Bill[] }) {
 
   return (
     <div>
+      {/* lg:pl-8 realigns tab content with the page header on desktop after the
+          parent lg:-mx-8 break-out. The border-b extends full-width intentionally. */}
       <FilterTabs
         active={filterStatus}
         counts={statusCounts}
         onChange={setFilterStatus}
+        className="lg:pl-8"
       />
 
-      <div className="flex items-center justify-between p-4 gap-4 bg-surface-subtle border-b border-line">
+      <div className="flex items-center justify-between p-4 lg:px-8 gap-4 bg-surface-subtle border-b border-line">
         <SearchInput value={search} onChange={setSearch} placeholder="Search vendor or invoice…" className="w-full sm:w-64" />
       </div>
 

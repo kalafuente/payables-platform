@@ -39,7 +39,7 @@ export function VendorAvatar({ name, size = 36 }: VendorAvatarProps) {
         color: palette.fg,
         fontSize: size * 0.36,
       }}
-      className="inline-flex items-center justify-center rounded-lg font-semibold leading-none select-none"
+      className="inline-flex items-center justify-center rounded-full font-semibold leading-none select-none"
     >
       {initials}
     </span>

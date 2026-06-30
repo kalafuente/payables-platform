@@ -48,7 +48,15 @@ export default async function BillsPage() {
         description="Manage and track your bills and invoices."
         actions={<NewBillButton />}
       />
-      <BillsClient bills={bills} />
+      {/*
+        On desktop the bills content breaks out of the global p-8 container so
+        the table stretches to the sidebar edge. Tabs and toolbar restore their
+        own lg:px-8 so they stay horizontally aligned with the page header.
+        Mobile layout is unchanged (no negative margin below lg).
+      */}
+      <div className="lg:-mx-8">
+        <BillsClient bills={bills} />
+      </div>
     </>
   )
 }

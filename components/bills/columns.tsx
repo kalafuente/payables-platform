@@ -1,3 +1,6 @@
+'use client'
+
+import Link from 'next/link'
 import type { ColumnDef, RowData } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { VendorAvatar } from '@/components/ui/vendor-avatar'
@@ -43,7 +46,7 @@ export const columns: ColumnDef<Bill>[] = [
     header: 'Amount',
     meta: { align: 'right' },
     cell: ({ row }) => (
-      <span className="font-mono tabular-nums text-ink">
+      <span className="tabular-nums text-ink">
         {formatCurrency(row.original.amount)}
       </span>
     ),
@@ -51,13 +54,38 @@ export const columns: ColumnDef<Bill>[] = [
   {
     accessorKey: 'dueDate',
     header: 'Due date',
+    meta: { align: 'right' },
     cell: ({ row }) => {
       const isOverdue = row.original.status === 'overdue'
       return (
-        <span className={isOverdue ? 'text-overdue font-medium' : 'text-ink-muted'}>
+        <span className={[
+          'tabular-nums',
+          isOverdue ? 'text-overdue font-medium' : 'text-ink-muted',
+        ].join(' ')}>
           {formatDate(row.original.dueDate)}
         </span>
       )
     },
+  },
+  {
+    id: 'actions',
+    header: '',
+    enableSorting: false,
+    cell: ({ row }) => (
+      // stopPropagation prevents the tr onClick from double-firing when
+      // the user clicks the Review link — both go to the same URL anyway.
+      <div
+        className="flex justify-end"
+        onClick={e => e.stopPropagation()}
+      >
+        <Link
+          href={`/bills/${row.original.id}`}
+          tabIndex={-1}
+          className="inline-flex items-center justify-center h-8 px-3 text-xs font-medium select-none whitespace-nowrap rounded-sm bg-surface text-ink border border-line hover:bg-canvas hover:border-line-strong transition-colors duration-100 cursor-pointer"
+        >
+          Review
+        </Link>
+      </div>
+    ),
   },
 ]
