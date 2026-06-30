@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { FormField } from '@/components/ui/form-field'
 import { InvoiceUpload, type OCRResult } from './invoice-upload'
+import { InvoicePreviewPanel } from './invoice-preview-panel'
 import { LineItemsEditor, nextLineItemId, type LineItemDraft } from './line-items-editor'
 import { createBill, updateBill } from '@/app/actions'
 
@@ -72,12 +73,12 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
   const [form, setForm] = useState<FormState>(
     initialValues
       ? {
-          vendor:        initialValues.vendor,
-          invoiceNumber: initialValues.invoiceNumber,
-          invoiceDate:   initialValues.invoiceDate,
-          dueDate:       initialValues.dueDate,
-          memo:          initialValues.memo,
-        }
+        vendor: initialValues.vendor,
+        invoiceNumber: initialValues.invoiceNumber,
+        invoiceDate: initialValues.invoiceDate,
+        dueDate: initialValues.dueDate,
+        memo: initialValues.memo,
+      }
       : EMPTY_FORM
   )
 
@@ -88,6 +89,7 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
   )
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [hasPreview, setHasPreview] = useState(false)
 
   const cancelHref = isEditMode ? `/bills/${billId}` : '/bills'
 
@@ -111,6 +113,7 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
       unitPrice: item.unitPrice,
     })))
     setErrors({})
+    setHasPreview(true)
   }
 
   function validate(): Record<string, string> {
@@ -125,15 +128,15 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
   function buildInput(applyDefaults: boolean) {
     const today = new Date().toISOString().slice(0, 10)
     return {
-      vendorName:    applyDefaults ? (form.vendor.trim() || 'Unnamed vendor') : form.vendor.trim(),
+      vendorName: applyDefaults ? (form.vendor.trim() || 'Unnamed vendor') : form.vendor.trim(),
       invoiceNumber: applyDefaults ? (form.invoiceNumber.trim() || `DRAFT-${Date.now()}`) : form.invoiceNumber.trim(),
-      invoiceDate:   form.invoiceDate || (applyDefaults ? today : ''),
-      dueDate:       form.dueDate || (applyDefaults ? today : ''),
-      memo:          form.memo.trim(),
-      lineItems:     lineItems.map(li => ({
+      invoiceDate: form.invoiceDate || (applyDefaults ? today : ''),
+      dueDate: form.dueDate || (applyDefaults ? today : ''),
+      memo: form.memo.trim(),
+      lineItems: lineItems.map(li => ({
         description: li.description,
-        quantity:    parseFloat(li.quantity) || 0,
-        unitPrice:   parseFloat(li.unitPrice) || 0,
+        quantity: parseFloat(li.quantity) || 0,
+        unitPrice: parseFloat(li.unitPrice) || 0,
       })),
     }
   }
@@ -159,11 +162,131 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
     })
   }
 
+  // Form fields are shared between both layout branches.
+  const formFields = (
+    <>
+      {/* Invoice details */}
+      <Card className="p-5">
+        <h2 className="mb-4 text-sm font-semibold text-ink">Invoice details</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField
+            label="Vendor"
+            htmlFor="vendor"
+            required
+            error={errors.vendor}
+          >
+            <Input
+              id="vendor"
+              value={form.vendor}
+              onChange={e => setField('vendor', e.target.value)}
+              error={!!errors.vendor}
+              placeholder="e.g. Stripe, Inc."
+              disabled={isPending}
+              aria-required="true"
+              aria-describedby={errors.vendor ? 'vendor-error' : undefined}
+            />
+          </FormField>
+
+          <FormField
+            label="Invoice number"
+            htmlFor="invoice-number"
+            required
+            error={errors.invoiceNumber}
+          >
+            <Input
+              id="invoice-number"
+              value={form.invoiceNumber}
+              onChange={e => setField('invoiceNumber', e.target.value)}
+              error={!!errors.invoiceNumber}
+              placeholder="INV-2026-001"
+              disabled={isPending}
+              aria-required="true"
+              aria-describedby={errors.invoiceNumber ? 'invoice-number-error' : undefined}
+            />
+          </FormField>
+
+          <FormField
+            label="Invoice date"
+            htmlFor="invoice-date"
+            required
+            error={errors.invoiceDate}
+          >
+            <Input
+              id="invoice-date"
+              type="date"
+              value={form.invoiceDate}
+              onChange={e => setField('invoiceDate', e.target.value)}
+              error={!!errors.invoiceDate}
+              disabled={isPending}
+              aria-required="true"
+              aria-describedby={errors.invoiceDate ? 'invoice-date-error' : undefined}
+            />
+          </FormField>
+
+          <FormField
+            label="Due date"
+            htmlFor="due-date"
+            required
+            error={errors.dueDate}
+          >
+            <Input
+              id="due-date"
+              type="date"
+              value={form.dueDate}
+              onChange={e => setField('dueDate', e.target.value)}
+              error={!!errors.dueDate}
+              disabled={isPending}
+              aria-required="true"
+              aria-describedby={errors.dueDate ? 'due-date-error' : undefined}
+            />
+          </FormField>
+        </div>
+      </Card>
+
+      {/* Line items */}
+      <LineItemsEditor items={lineItems} onChange={setLineItems} />
+
+      {/* Memo */}
+      <Card className="p-5">
+        <FormField
+          label="Memo"
+          htmlFor="memo"
+          description="Optional. Visible to approvers during review."
+        >
+          <Textarea
+            id="memo"
+            value={form.memo}
+            onChange={e => setField('memo', e.target.value)}
+            placeholder="Add context for the approver…"
+            disabled={isPending}
+          />
+        </FormField>
+      </Card>
+
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-2 py-2">
+        <Button variant="ghost" onClick={() => router.push(cancelHref)} disabled={isPending}>
+          Cancel
+        </Button>
+        {!isEditMode && (
+          <Button variant="secondary" onClick={handleSaveDraft} disabled={isPending}>
+            {isPending ? 'Saving…' : 'Save Draft'}
+          </Button>
+        )}
+        <Button variant="primary" onClick={handleSave} disabled={isPending}>
+          {isPending
+            ? (isEditMode ? 'Saving…' : 'Creating…')
+            : (isEditMode ? 'Save Changes' : 'Create Bill')}
+        </Button>
+      </div>
+    </>
+  )
+
   return (
     <div>
       <Link
         href={cancelHref}
-        className="group mb-6 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100"
+        className="group mb-3 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100"
       >
         <span className="transition-transform duration-100 group-hover:-translate-x-0.5">
           <ChevronLeft />
@@ -171,129 +294,30 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
         {isEditMode ? 'Bill' : 'Bills'}
       </Link>
 
-      <h1 className="mb-6 text-xl font-semibold text-ink">
+      <h1 className="mb-4 text-xl font-semibold text-ink">
         {isEditMode ? 'Edit Bill' : 'Create Bill'}
       </h1>
 
-      <div className="space-y-4">
-        {/* OCR upload — only available when creating a new bill */}
-        {!isEditMode && <InvoiceUpload onExtracted={handleExtracted} />}
-
-        {/* Invoice details */}
-        <Card className="p-6">
-          <h2 className="mb-5 text-sm font-semibold text-ink">Invoice details</h2>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <FormField
-              label="Vendor"
-              htmlFor="vendor"
-              required
-              error={errors.vendor}
-            >
-              <Input
-                id="vendor"
-                value={form.vendor}
-                onChange={e => setField('vendor', e.target.value)}
-                error={!!errors.vendor}
-                placeholder="e.g. Stripe, Inc."
-                disabled={isPending}
-                aria-required="true"
-                aria-describedby={errors.vendor ? 'vendor-error' : undefined}
-              />
-            </FormField>
-
-            <FormField
-              label="Invoice number"
-              htmlFor="invoice-number"
-              required
-              error={errors.invoiceNumber}
-            >
-              <Input
-                id="invoice-number"
-                value={form.invoiceNumber}
-                onChange={e => setField('invoiceNumber', e.target.value)}
-                error={!!errors.invoiceNumber}
-                placeholder="INV-2026-001"
-                disabled={isPending}
-                aria-required="true"
-                aria-describedby={errors.invoiceNumber ? 'invoice-number-error' : undefined}
-              />
-            </FormField>
-
-            <FormField
-              label="Invoice date"
-              htmlFor="invoice-date"
-              required
-              error={errors.invoiceDate}
-            >
-              <Input
-                id="invoice-date"
-                type="date"
-                value={form.invoiceDate}
-                onChange={e => setField('invoiceDate', e.target.value)}
-                error={!!errors.invoiceDate}
-                disabled={isPending}
-                aria-required="true"
-                aria-describedby={errors.invoiceDate ? 'invoice-date-error' : undefined}
-              />
-            </FormField>
-
-            <FormField
-              label="Due date"
-              htmlFor="due-date"
-              required
-              error={errors.dueDate}
-            >
-              <Input
-                id="due-date"
-                type="date"
-                value={form.dueDate}
-                onChange={e => setField('dueDate', e.target.value)}
-                error={!!errors.dueDate}
-                disabled={isPending}
-                aria-required="true"
-                aria-describedby={errors.dueDate ? 'due-date-error' : undefined}
-              />
-            </FormField>
-          </div>
-        </Card>
-
-        {/* Line items */}
-        <LineItemsEditor items={lineItems} onChange={setLineItems} />
-
-        {/* Memo */}
-        <Card className="p-6">
-          <FormField
-            label="Memo"
-            htmlFor="memo"
-            description="Optional. Visible to approvers during review."
-          >
-            <Textarea
-              id="memo"
-              value={form.memo}
-              onChange={e => setField('memo', e.target.value)}
-              placeholder="Add context for the approver…"
-              disabled={isPending}
-            />
-          </FormField>
-        </Card>
-
-        {/* Actions */}
-        <div className="flex items-center justify-end gap-2 py-2">
-          <Button variant="ghost" onClick={() => router.push(cancelHref)} disabled={isPending}>
-            Cancel
-          </Button>
-          {!isEditMode && (
-            <Button variant="secondary" onClick={handleSaveDraft} disabled={isPending}>
-              {isPending ? 'Saving…' : 'Save Draft'}
-            </Button>
-          )}
-          <Button variant="primary" onClick={handleSave} disabled={isPending}>
-            {isPending
-              ? (isEditMode ? 'Saving…' : 'Creating…')
-              : (isEditMode ? 'Save Changes' : 'Create Bill')}
-          </Button>
+      {isEditMode ? (
+        /* Edit mode: single-column, no upload panel */
+        <div className="space-y-4">
+          {formFields}
         </div>
-      </div>
+      ) : (
+        /* Create mode: always two-column — left panel switches between upload zone and PDF preview */
+        <div className="flex flex-col gap-6 lg:flex-row">
+          <div className="shrink-0 lg:sticky lg:top-8 lg:w-[44%] h-[480px] lg:h-auto lg:min-h-0">
+            {hasPreview ? (
+              <InvoicePreviewPanel onReset={() => setHasPreview(false)} />
+            ) : (
+              <InvoiceUpload onExtracted={handleExtracted} />
+            )}
+          </div>
+          <div className="min-w-0 flex-1 space-y-4">
+            {formFields}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

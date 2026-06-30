@@ -53,7 +53,6 @@ export function Sidebar({ isOpen = false }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 h-[var(--header-height)] shrink-0">
-        <div className="size-5 bg-primary rounded-xs shrink-0" />
         <span className="text-sm font-semibold text-ink tracking-tight">Payables</span>
       </div>
 

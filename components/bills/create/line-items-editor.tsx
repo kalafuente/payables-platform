@@ -80,11 +80,11 @@ export function LineItemsEditor({ items, onChange }: LineItemsEditorProps) {
   return (
     <Card>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-line">
+      <div className="px-6 py-3 border-b border-line">
         <h2 className="text-sm font-semibold text-ink">Line items</h2>
       </div>
 
-      <div className="px-6 py-4 space-y-1.5">
+      <div className="px-6 py-3 space-y-1.5">
         {/* Column labels */}
         <div className={cn(COL, 'mb-2')}>
           <span className="text-xs font-medium text-ink-muted">Description</span>

@@ -140,7 +140,7 @@ export function InvoiceUpload({ onExtracted }: InvoiceUploadProps) {
       onClick={() => { if (!isProcessing) inputRef.current?.click() }}
       onKeyDown={e => { if (!isProcessing && (e.key === 'Enter' || e.key === ' ')) inputRef.current?.click() }}
       className={cn(
-        'rounded-sm border-2 border-dashed py-10 text-center',
+        'h-full rounded-sm border-2 border-dashed flex flex-col items-center justify-center',
         'transition-colors duration-100',
         isProcessing
           ? 'cursor-default border-line'
