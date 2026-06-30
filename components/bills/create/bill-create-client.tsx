@@ -12,6 +12,7 @@ import { InvoiceUpload, type OCRResult } from './invoice-upload'
 import { InvoicePreviewPanel } from './invoice-preview-panel'
 import { LineItemsEditor, nextLineItemId, type LineItemDraft } from './line-items-editor'
 import { createBill, updateBill } from '@/app/actions'
+import { useToast } from '@/components/ui/toaster'
 
 interface FormState {
   vendor: string
@@ -90,6 +91,7 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [hasPreview, setHasPreview] = useState(false)
+  const { toast } = useToast()
 
   const cancelHref = isEditMode ? `/bills/${billId}` : '/bills'
 
@@ -114,6 +116,11 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
     })))
     setErrors({})
     setHasPreview(true)
+    toast({
+      variant: 'success',
+      title: 'Invoice uploaded',
+      description: 'Invoice data was extracted and the form has been pre-filled.',
+    })
   }
 
   function validate(): Record<string, string> {
@@ -149,16 +156,34 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
     }
     startTransition(async () => {
       if (isEditMode) {
-        await updateBill(billId!, buildInput(false))
+        const result = await updateBill(billId!, buildInput(false))
+        if (result?.error) {
+          toast({ variant: 'error', title: 'Could not save changes', description: result.error })
+          return
+        }
+        toast({ variant: 'success', title: 'Draft updated', description: 'Your changes have been saved.' })
+        router.push(`/bills/${billId}`)
       } else {
-        await createBill(buildInput(false))
+        const result = await createBill(buildInput(false))
+        if (result?.error) {
+          toast({ variant: 'error', title: 'Could not create bill', description: result.error })
+          return
+        }
+        toast({ variant: 'success', title: 'Bill created', description: 'The invoice has been saved as a draft.' })
+        router.push('/bills')
       }
     })
   }
 
   function handleSaveDraft() {
     startTransition(async () => {
-      await createBill(buildInput(true))
+      const result = await createBill(buildInput(true))
+      if (result?.error) {
+        toast({ variant: 'error', title: 'Could not create bill', description: result.error })
+        return
+      }
+      toast({ variant: 'success', title: 'Bill created', description: 'The invoice has been saved as a draft.' })
+      router.push('/bills')
     })
   }
 

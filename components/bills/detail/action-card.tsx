@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
 import { STATUS_LABELS, type BillStatus } from '@/lib/mock-bills'
 import { submitForApproval, approveBill } from '@/app/actions'
+import { useToast } from '@/components/ui/toaster'
 
 // ---------------------------------------------------------------------------
 // Bill Lifecycle
@@ -149,6 +150,7 @@ interface ActionCardProps {
 export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const { toast } = useToast()
 
   const desc    = getDescription(status, dueDate)
   const actions = ACTION_SETS[status]
@@ -157,11 +159,19 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
 
   function handlePrimary() {
     if (status === 'draft') {
-      startTransition(() => submitForApproval(billId))
+      startTransition(async () => {
+        await submitForApproval(billId)
+        toast({ variant: 'success', title: 'Submitted for approval', description: 'The bill is now waiting for approval.' })
+        router.refresh()
+      })
       return
     }
     if (status === 'pending' || status === 'overdue') {
-      startTransition(() => approveBill(billId))
+      startTransition(async () => {
+        await approveBill(billId)
+        toast({ variant: 'success', title: 'Bill approved', description: 'The bill is ready to be scheduled for payment.' })
+        router.refresh()
+      })
       return
     }
     console.log(actions.primary)
