@@ -28,10 +28,10 @@ export function LineItemsCard({ lineItems, total }: LineItemsCardProps) {
             <tr key={item.id} className="border-b border-line last:border-0">
               <td className="px-5 py-3 text-sm text-ink">{item.description}</td>
               <td className="px-5 py-3 text-sm text-ink-muted text-right tabular-nums">
-                {item.quantity > 1 ? item.quantity : '—'}
+                {item.quantity}
               </td>
               <td className="px-5 py-3 text-sm text-ink-muted text-right font-mono tabular-nums">
-                {item.quantity > 1 ? formatCurrency(item.unitPrice) : '—'}
+                {formatCurrency(item.unitPrice)}
               </td>
               <td className="px-5 py-3 text-sm text-ink text-right font-mono tabular-nums">
                 {formatCurrency(item.amount)}
