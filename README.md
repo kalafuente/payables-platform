@@ -6,31 +6,21 @@ A polished Accounts Payable MVP built as a take-home assignment for a Design Eng
 
 The application covers the core AP workflow: receiving invoices, routing them for approval, and tracking payment. Each bill moves through a defined lifecycle:
 
-## Preview
-### Dashboard
-
-![Dashboard](./public/sc1.jpeg)
-
-### Bills
-
-![Bills](./public/sc2.jpeg)
-
-### Bill Details
-
-![Bill Details](./public/sc3.jpeg)
-
-### Create Bill
-
-![Create Bill](./public/sc4.jpeg)
-
 **Draft → Pending Approval → Approved → Scheduled → Paid**
 
 Overdue is a derived state — a bill that reached its due date without being paid. The UI surfaces this without a separate transition.
 
 Every status change writes an activity entry, so the bill detail page shows a coherent audit trail: who created it, who submitted it, who approved it, and when payment was scheduled or confirmed. This is standard in AP tooling because invoices are financial commitments — the timeline matters for audits and vendor disputes.
 
-### Dashboard
 
+
+### Bills
+
+![Bills](./public/sc2.jpeg)
+
+
+### Dashboard
+![Dashboard](./public/sc1.jpeg)
 The dashboard is designed around the questions an AP specialist asks at the start of their day, in priority order:
 
 1. **What is already overdue?** — Overdue bills appear first in Needs Your Attention with a distinct visual treatment. The due date is shown in red to signal that the deadline has passed, not that it is upcoming.
@@ -39,14 +29,13 @@ The dashboard is designed around the questions an AP specialist asks at the star
 4. **What changed recently?** — Recent Activity is filtered to workflow state changes only (submitted, approved, scheduled, paid). Passive events like "Bill created" are excluded so every visible entry represents a meaningful transition.
 5. **What is coming up?** — Due This Week counts bills that will need action within seven days, excluding those already scheduled or overdue (which have their own signals).
 
-The two metrics replaced from a typical finance dashboard — Total Outstanding and Paid This Month — are executive reporting numbers. They have no operational use for a specialist whose job is to clear the queue.
 
 ### Bill Detail
-
+![Bill Details](./public/sc3.jpeg)
 The detail page has a persistent action card that adapts to the bill's current status. Draft bills show "Submit for Approval" and "Edit Bill". Pending bills show "Approve Bill". Approved bills show "Schedule Payment". The lifecycle progress indicator shows where the bill sits in the overall workflow without requiring the specialist to remember status names.
 
 ### Create and Edit
-
+![Create Bill](./public/sc4.jpeg)
 The create flow includes an invoice upload step (OCR simulation) that pre-fills vendor, dates, and line items. Line items are entered with quantity and unit price; the total is calculated and stored at submission time using integer arithmetic to avoid floating-point drift on monetary values.
 
 Edit is restricted to Draft bills. Once a bill enters the approval workflow it becomes read-only, which preserves the integrity of the approval record.
