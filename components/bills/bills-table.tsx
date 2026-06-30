@@ -163,6 +163,9 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const router = useRouter()
 
+  // react-hooks/incompatible-library: useReactTable() returns functions that can't
+  // be safely memoized by the React Compiler, so this component is skipped. This is
+  // a known TanStack Table limitation — the warning is expected and the behavior is correct.
   const table = useReactTable({
     data: bills,
     columns,

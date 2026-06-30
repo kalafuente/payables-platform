@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Sidebar } from './sidebar'
 import { Header } from './header'
@@ -10,9 +10,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   // Close the sidebar on navigation so navigating on small screens auto-hides it.
-  useEffect(() => {
+  // Storing the previous pathname and updating state during render avoids a
+  // setState-in-effect cycle (react-hooks/set-state-in-effect).
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname)
     setSidebarOpen(false)
-  }, [pathname])
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
