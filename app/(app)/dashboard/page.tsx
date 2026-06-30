@@ -7,8 +7,7 @@ import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { UpcomingPayments, type ScheduledBill } from '@/components/dashboard/upcoming-payments'
 import { db } from '@/lib/db'
 import { formatCurrency } from '@/lib/format'
-import type { Bill, BillStatus, ActivityEntryType } from '@/lib/mock-bills'
-import type { ActivityFeedEntry } from '@/lib/dashboard-data'
+import type { Bill, BillStatus, ActivityEntryType, ActivityFeedEntry } from '@/lib/mock-bills'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Dashboard — Payables' }

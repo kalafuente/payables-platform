@@ -160,15 +160,12 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
       })
       return
     }
-    console.log(actions.primary)
   }
 
   function handleSecondary() {
     if (status === 'draft') {
       router.push(`/bills/${billId}/edit`)
-      return
     }
-    console.log(actions.secondary)
   }
 
   return (
@@ -225,7 +222,6 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
           <div className="px-5 py-3">
             <button
               type="button"
-              onClick={() => console.log(actions.destructive)}
               className="cursor-pointer text-sm text-ink-subtle transition-colors duration-100 hover:text-overdue"
             >
               {actions.destructive}

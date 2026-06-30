@@ -2,8 +2,7 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
-import type { ActivityFeedEntry } from '@/lib/dashboard-data'
-import type { ActivityEntryType } from '@/lib/mock-bills'
+import type { ActivityFeedEntry, ActivityEntryType } from '@/lib/mock-bills'
 
 const DOT_COLOR: Record<ActivityEntryType, string> = {
   created:           'bg-ink-disabled',

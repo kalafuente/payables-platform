@@ -1,4 +1,4 @@
-import { SectionTitle, DocCard } from '../doc-components'
+import { SectionTitle } from '../doc-components'
 import { colorGroups, statusColors, typeScale, radii, systemIcons } from '../data'
 
 export function FoundationsSection() {
