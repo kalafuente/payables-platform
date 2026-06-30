@@ -54,7 +54,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       <div
         aria-live="polite"
         aria-label="Notifications"
-        className="fixed bottom-4 right-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2 pointer-events-none"
+        className="fixed top-4 right-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2 pointer-events-none"
       >
         <AnimatePresence initial={false}>
           {toasts.map(t => (
@@ -64,7 +64,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               initial="hidden"
               animate="visible"
               exit="exit"
-              variants={variants.slideUp}
+              variants={variants.slideDown}
             >
               <Toast {...t} onDismiss={() => dismiss(t.id)} />
             </motion.div>
