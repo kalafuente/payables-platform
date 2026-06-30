@@ -21,6 +21,23 @@ interface ActivityCardProps {
   activity: ActivityEntry[]
 }
 
+function ActivityEntryItem({ entry, isLast }: { entry: ActivityEntry; isLast: boolean }) {
+  return (
+    <li className="flex gap-3">
+      <div className="flex flex-col items-center">
+        <ActivityDot type={entry.type} />
+        {!isLast && <div className="w-px flex-1 min-h-[20px] bg-line mt-1.5" />}
+      </div>
+      <div className={cn('pb-4', isLast && 'pb-0')}>
+        <p className="text-sm text-ink leading-snug">{entry.label}</p>
+        <p className="mt-0.5 text-xs text-ink-subtle">
+          {entry.actor} · {formatDate(entry.date)}
+        </p>
+      </div>
+    </li>
+  )
+}
+
 export function ActivityCard({ activity }: ActivityCardProps) {
   return (
     <Card>
@@ -34,23 +51,11 @@ export function ActivityCard({ activity }: ActivityCardProps) {
         ) : (
           <ol className="space-y-0">
             {activity.map((entry, i) => (
-              <li key={entry.id} className="flex gap-3">
-                {/* Icon column: dot + connector line */}
-                <div className="flex flex-col items-center">
-                  <ActivityDot type={entry.type} />
-                  {i < activity.length - 1 && (
-                    <div className="w-px flex-1 min-h-[20px] bg-line mt-1.5" />
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className={cn('pb-4', i === activity.length - 1 && 'pb-0')}>
-                  <p className="text-sm text-ink leading-snug">{entry.label}</p>
-                  <p className="mt-0.5 text-xs text-ink-subtle">
-                    {entry.actor} · {formatDate(entry.date)}
-                  </p>
-                </div>
-              </li>
+              <ActivityEntryItem
+                key={entry.id}
+                entry={entry}
+                isLast={i === activity.length - 1}
+              />
             ))}
           </ol>
         )}

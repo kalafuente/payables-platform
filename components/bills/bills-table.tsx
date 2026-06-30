@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   flexRender,
   type SortingState,
+  type Table,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import type { Bill } from '@/lib/mock-bills'
@@ -58,6 +59,106 @@ interface BillsTableProps {
   animationKey: string
 }
 
+function BillsTableHeader({ table }: { table: Table<Bill> }) {
+  return (
+    <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+      <ColGroup />
+      <thead className="border-b border-line">
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header, i, arr) => {
+              const canSort    = header.column.getCanSort()
+              const sorted     = header.column.getIsSorted()
+              const alignRight = header.column.columnDef.meta?.align === 'right'
+              const isLast     = i === arr.length - 1
+
+              return (
+                <th
+                  key={header.id}
+                  scope="col"
+                  aria-sort={
+                    canSort
+                      ? (sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none')
+                      : undefined
+                  }
+                  className={cn(
+                    'py-2.5 text-xs font-medium text-ink-muted',
+                    thPadding(i, arr.length),
+                    alignRight ? 'text-right' : 'text-left',
+                    !isLast && ('border-r border-line'),
+                  )}
+                >
+                  {header.isPlaceholder ? null : canSort ? (
+                    <button
+                      onClick={header.column.getToggleSortingHandler()}
+                      className="inline-flex items-center cursor-pointer select-none"
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      <SortIcon sorted={sorted} />
+                    </button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
+                  )}
+                </th>
+              )
+            })}
+          </tr>
+        ))}
+      </thead>
+    </table>
+  )
+}
+
+// Separate table so header rows are excluded from the enter animation on filter change.
+function BillsTableBody({ table, animationKey, onNavigate }: {
+  table: Table<Bill>
+  animationKey: string
+  onNavigate: (id: string) => void
+}) {
+  return (
+    <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+      <ColGroup />
+      <tbody>
+        {table.getRowModel().rows.map(row => (
+          <motion.tr
+            key={`${animationKey}-${row.id}`}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
+            tabIndex={0}
+            aria-label={`${row.original.vendorName}, ${row.original.invoiceNumber}`}
+            onClick={() => onNavigate(row.original.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onNavigate(row.original.id)
+              }
+            }}
+            className="border-b border-line last:border-0 hover:bg-slate-50 focus-visible:bg-slate-50 transition-colors duration-75 cursor-pointer"
+          >
+            {row.getVisibleCells().map((cell, i, arr) => {
+              const isLast = i === arr.length - 1
+              return (
+                <td
+                  key={cell.id}
+                  className={cn(
+                    'py-3 text-sm',
+                    tdPadding(i, arr.length),
+                    cell.column.columnDef.meta?.align === 'right' && 'text-right',
+                    !isLast && ('border-r border-line'),
+                  )}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              )
+            })}
+          </motion.tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 export function BillsTable({ bills, animationKey }: BillsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const router = useRouter()
@@ -76,98 +177,14 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
       {/* overflow-x-auto lets the table scroll on narrow viewports; min-w keeps
           column percentages meaningful when the viewport is narrower than 700px. */}
       <div className="overflow-x-auto">
-      <div className="min-w-[700px]">
-
-      {/* Static header — never animates */}
-      <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
-        <ColGroup />
-        <thead className="border-b border-line">
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header, i, arr) => {
-                const canSort   = header.column.getCanSort()
-                const sorted    = header.column.getIsSorted()
-                const alignRight = header.column.columnDef.meta?.align === 'right'
-                const isLast    = i === arr.length - 1
-
-                return (
-                  <th
-                    key={header.id}
-                    scope="col"
-                    aria-sort={
-                      canSort
-                        ? (sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none')
-                        : undefined
-                    }
-                    className={cn(
-                      'py-2.5 text-xs font-medium text-ink-muted',
-                      thPadding(i, arr.length),
-                      alignRight ? 'text-right' : 'text-left',
-                      !isLast && ('border-r border-line'),
-                    )}
-                  >
-                    {header.isPlaceholder ? null : canSort ? (
-                      <button
-                        onClick={header.column.getToggleSortingHandler()}
-                        className="inline-flex items-center cursor-pointer select-none"
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        <SortIcon sorted={sorted} />
-                      </button>
-                    ) : (
-                      flexRender(header.column.columnDef.header, header.getContext())
-                    )}
-                  </th>
-                )
-              })}
-            </tr>
-          ))}
-        </thead>
-      </table>
-
-      {/* Animated rows — keyed per filter so rows replay enter animation on tab switch */}
-      <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
-        <ColGroup />
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <motion.tr
-              key={`${animationKey}-${row.id}`}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
-              tabIndex={0}
-              aria-label={`${row.original.vendorName}, ${row.original.invoiceNumber}`}
-              onClick={() => router.push(`/bills/${row.original.id}`)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  router.push(`/bills/${row.original.id}`)
-                }
-              }}
-              className="border-b border-line last:border-0 hover:bg-slate-50 focus-visible:bg-slate-50 transition-colors duration-75 cursor-pointer"
-            >
-              {row.getVisibleCells().map((cell, i, arr) => {
-                const isLast = i === arr.length - 1
-                return (
-                  <td
-                    key={cell.id}
-                    className={cn(
-                      'py-3 text-sm',
-                      tdPadding(i, arr.length),
-                      cell.column.columnDef.meta?.align === 'right' && 'text-right',
-                      !isLast && ('border-r border-line'),
-                    )}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                )
-              })}
-            </motion.tr>
-          ))}
-        </tbody>
-      </table>
-
-      </div>
+        <div className="min-w-[700px]">
+          <BillsTableHeader table={table} />
+          <BillsTableBody
+            table={table}
+            animationKey={animationKey}
+            onNavigate={(id) => router.push(`/bills/${id}`)}
+          />
+        </div>
       </div>
     </div>
   )
