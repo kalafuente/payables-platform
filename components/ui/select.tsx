@@ -34,12 +34,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         aria-invalid={error || undefined}
         className={cn(
           'h-9 w-full appearance-none rounded-sm border bg-surface px-3 pr-8 text-sm text-ink',
-          'focus:outline-none focus:ring-1',
+          'focus:outline-none focus:ring-2 focus:ring-accent',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'transition-colors duration-100',
           error
-            ? 'border-overdue focus:border-overdue focus:ring-overdue/30'
-            : 'border-line focus:border-line-strong focus:ring-line-strong',
+            ? 'border-overdue focus:border-overdue'
+            : 'border-line focus:border-line-strong',
           className,
         )}
         {...props}

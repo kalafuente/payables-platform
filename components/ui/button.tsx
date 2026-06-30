@@ -20,7 +20,6 @@ const variantClasses: Record<ButtonVariant, string> = {
     'bg-primary text-primary-foreground',
     'enabled:hover:bg-primary-hover',
     'enabled:active:opacity-90',
-    'focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1',
   ].join(' '),
 
   // High-emphasis CTA only — e.g. "New Bill", "Pay Now". Not for routine actions.
@@ -28,28 +27,24 @@ const variantClasses: Record<ButtonVariant, string> = {
     'bg-accent text-accent-foreground',
     'enabled:hover:bg-accent-hover',
     'enabled:active:opacity-90',
-    'focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-1',
   ].join(' '),
 
   secondary: [
     'bg-surface text-ink border border-line',
     'enabled:hover:bg-canvas enabled:hover:border-line-strong',
     'enabled:active:opacity-90',
-    'focus-visible:ring-2 focus-visible:ring-line-strong focus-visible:ring-offset-1',
   ].join(' '),
 
   ghost: [
     'text-ink-muted',
     'enabled:hover:bg-slate-100 enabled:hover:text-ink',
     'enabled:active:opacity-90',
-    'focus-visible:ring-2 focus-visible:ring-line-strong focus-visible:ring-offset-1',
   ].join(' '),
 
   danger: [
     'bg-danger text-danger-foreground',
     'enabled:hover:bg-danger-hover',
     'enabled:active:opacity-90',
-    'focus-visible:ring-2 focus-visible:ring-danger/40 focus-visible:ring-offset-1',
   ].join(' '),
 }
 
@@ -112,8 +107,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
         'cursor-pointer disabled:cursor-not-allowed',
         // Transition
         'transition-colors duration-100',
-        // Focus — only visible for keyboard navigation
-        'focus-visible:outline-none',
+        // Focus — accent ring, only visible for keyboard navigation
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
         // Disabled — opacity only; pointer-events stay on so cursor renders correctly
         'disabled:opacity-40',
         // Variant + size

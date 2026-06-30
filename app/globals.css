@@ -245,6 +245,17 @@
 }
 
 /*
+ * Global keyboard-focus indicator.
+ * Uses the accent colour so focus is always recognisable across the app.
+ * Components that need an inset ring (Button, Input, etc.) suppress this
+ * with focus-visible:outline-none and apply their own ring-accent instead.
+ */
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
  * Root font size: 18px (+12.5% over browser default 16px).
  * All rem-based Tailwind utilities (spacing, type, radii, control heights)
  * scale proportionally. Pixel-based layout dimensions (sidebar, header) are unaffected.

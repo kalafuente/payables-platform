@@ -80,6 +80,12 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
                 return (
                   <th
                     key={header.id}
+                    scope="col"
+                    aria-sort={
+                      canSort
+                        ? (sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none')
+                        : undefined
+                    }
                     className={cn(
                       'px-5 py-2.5 text-xs font-medium text-ink-muted',
                       alignRight ? 'text-right' : 'text-left',
@@ -114,8 +120,16 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
+              tabIndex={0}
+              aria-label={`${row.original.vendorName}, ${row.original.invoiceNumber}`}
               onClick={() => router.push(`/bills/${row.original.id}`)}
-              className="border-b border-line last:border-0 hover:bg-slate-100 transition-colors duration-75 cursor-pointer"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  router.push(`/bills/${row.original.id}`)
+                }
+              }}
+              className="border-b border-line last:border-0 hover:bg-slate-100 focus-visible:bg-slate-100 transition-colors duration-75 cursor-pointer"
             >
               {row.getVisibleCells().map(cell => (
                 <td

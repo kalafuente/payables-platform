@@ -18,12 +18,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       className={cn(
         'h-9 w-full rounded-sm border bg-surface px-3 text-sm text-ink',
         'placeholder:text-ink-subtle',
-        'focus:outline-none focus:ring-1',
+        'focus:outline-none focus:ring-2 focus:ring-accent',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'transition-colors duration-100',
         error
-          ? 'border-overdue focus:border-overdue focus:ring-overdue/30'
-          : 'border-line focus:border-line-strong focus:ring-line-strong',
+          ? 'border-overdue focus:border-overdue'
+          : 'border-line focus:border-line-strong',
         className,
       )}
       {...props}

@@ -17,6 +17,7 @@ export function NavItem({ href, label, icon }: NavItemProps) {
   return (
     <Link
       href={href}
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
         'flex items-center gap-2.5 px-3 h-9 rounded text-sm transition-colors duration-100 cursor-pointer',
         isActive

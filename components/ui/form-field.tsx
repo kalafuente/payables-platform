@@ -33,7 +33,11 @@ export function FormField({
       <div className="mt-1.5">{children}</div>
 
       {error && (
-        <p role="alert" className="mt-1.5 text-xs text-overdue">
+        <p
+          role="alert"
+          id={htmlFor ? `${htmlFor}-error` : undefined}
+          className="mt-1.5 text-xs text-overdue"
+        >
           {error}
         </p>
       )}

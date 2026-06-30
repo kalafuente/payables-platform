@@ -231,6 +231,7 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
           <div className="border-t border-line" />
           <div className="px-5 py-3">
             <button
+              type="button"
               onClick={() => console.log(actions.destructive)}
               className="cursor-pointer text-sm text-ink-subtle transition-colors duration-100 hover:text-overdue"
             >

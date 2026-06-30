@@ -196,6 +196,8 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
                 error={!!errors.vendor}
                 placeholder="e.g. Stripe, Inc."
                 disabled={isPending}
+                aria-required="true"
+                aria-describedby={errors.vendor ? 'vendor-error' : undefined}
               />
             </FormField>
 
@@ -212,6 +214,8 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
                 error={!!errors.invoiceNumber}
                 placeholder="INV-2026-001"
                 disabled={isPending}
+                aria-required="true"
+                aria-describedby={errors.invoiceNumber ? 'invoice-number-error' : undefined}
               />
             </FormField>
 
@@ -228,6 +232,8 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
                 onChange={e => setField('invoiceDate', e.target.value)}
                 error={!!errors.invoiceDate}
                 disabled={isPending}
+                aria-required="true"
+                aria-describedby={errors.invoiceDate ? 'invoice-date-error' : undefined}
               />
             </FormField>
 
@@ -244,6 +250,8 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
                 onChange={e => setField('dueDate', e.target.value)}
                 error={!!errors.dueDate}
                 disabled={isPending}
+                aria-required="true"
+                aria-describedby={errors.dueDate ? 'due-date-error' : undefined}
               />
             </FormField>
           </div>

@@ -38,11 +38,12 @@ export function SearchInput({ value, onChange, placeholder = 'Search…', classN
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-label={placeholder}
         className={cn(
           'h-8 w-full rounded-full border border-line bg-surface text-sm text-ink',
           'pl-8 pr-8',
           'placeholder:text-ink-subtle',
-          'focus:outline-none focus:border-line-strong focus:ring-1 focus:ring-line-strong',
+          'focus:outline-none focus:border-line-strong focus:ring-2 focus:ring-accent',
           'transition-colors duration-100',
         )}
       />
