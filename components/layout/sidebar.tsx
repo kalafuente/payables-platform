@@ -2,28 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { NavItem } from './nav-item'
-
-// ── Icons ──────────────────────────────────────────────────────────────────────
-
-function GridIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="1.5" y="1.5" width="5" height="5" rx="0.75" />
-      <rect x="9.5" y="1.5" width="5" height="5" rx="0.75" />
-      <rect x="1.5" y="9.5" width="5" height="5" rx="0.75" />
-      <rect x="9.5" y="9.5" width="5" height="5" rx="0.75" />
-    </svg>
-  )
-}
-
-function ReceiptIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2.5" y="1.5" width="11" height="13" rx="1" />
-      <path d="M5 6h6M5 8.5h6M5 11h4" />
-    </svg>
-  )
-}
+import { GridIcon, ReceiptIcon } from '@/components/icons'
 
 // ── Navigation config ──────────────────────────────────────────────────────────
 

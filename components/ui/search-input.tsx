@@ -1,29 +1,13 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { SearchIcon, XIcon } from '@/components/icons'
 
 interface SearchInputProps {
   value: string
   onChange: (value: string) => void
   placeholder?: string
   className?: string
-}
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="7" cy="7" r="4.5" />
-      <path d="M10.5 10.5L14 14" />
-    </svg>
-  )
-}
-
-function ClearIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
-      <path d="M4 4l8 8M12 4l-8 8" />
-    </svg>
-  )
 }
 
 export function SearchInput({ value, onChange, placeholder = 'Search…', className }: SearchInputProps) {
@@ -54,7 +38,7 @@ export function SearchInput({ value, onChange, placeholder = 'Search…', classN
           className="absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 cursor-pointer text-ink-subtle hover:text-ink"
           aria-label="Clear search"
         >
-          <ClearIcon />
+          <XIcon />
         </button>
       )}
     </div>

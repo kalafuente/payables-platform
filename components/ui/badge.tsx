@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { StatusDotIcon } from '@/components/icons'
 
 export type BadgeVariant =
   | 'default'
@@ -25,15 +26,6 @@ const variantClasses: Record<BadgeVariant, string> = {
   overdue:   'bg-overdue-bg text-overdue',
 }
 
-function StatusIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0">
-      <circle cx="8" cy="8" r="6.5" stroke="currentColor" />
-      <path fill="currentColor" d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
-    </svg>
-  )
-}
-
 export function Badge({ variant = 'default', className, children }: BadgeProps) {
   return (
     <span
@@ -45,7 +37,7 @@ export function Badge({ variant = 'default', className, children }: BadgeProps) 
         className,
       )}
     >
-      <StatusIcon />
+      <StatusDotIcon className="size-3 shrink-0" />
       {children}
     </span>
   )

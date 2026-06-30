@@ -13,6 +13,7 @@ import {
 import { cn } from '@/lib/utils'
 import type { Bill } from '@/lib/mock-bills'
 import { columns } from './columns'
+import { SortUpIcon, SortDownIcon } from '@/components/icons'
 
 // Percentages must sum to 100 and stay in sync with loading.tsx.
 // Vendor carries most content; Actions (Review) is intentionally narrow.
@@ -31,12 +32,8 @@ function ColGroup() {
 function SortIcon({ sorted }: { sorted: false | 'asc' | 'desc' }) {
   return (
     <span className="ml-1.5 inline-flex flex-col gap-[2px] shrink-0" aria-hidden="true">
-      <svg viewBox="0 0 6 4" className={cn('size-[5px]', sorted === 'asc' ? 'text-ink' : 'text-ink-disabled')} fill="currentColor">
-        <path d="M3 0L6 4H0z" />
-      </svg>
-      <svg viewBox="0 0 6 4" className={cn('size-[5px]', sorted === 'desc' ? 'text-ink' : 'text-ink-disabled')} fill="currentColor">
-        <path d="M3 4L0 0H6z" />
-      </svg>
+      <SortUpIcon className={cn('size-[5px]', sorted === 'asc' ? 'text-ink' : 'text-ink-disabled')} />
+      <SortDownIcon className={cn('size-[5px]', sorted === 'desc' ? 'text-ink' : 'text-ink-disabled')} />
     </span>
   )
 }

@@ -2,25 +2,10 @@
 
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
+import { ChevronDownIcon } from '@/components/icons'
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: boolean
-}
-
-function ChevronDown() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M4 6l4 4 4-4" />
-    </svg>
-  )
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
@@ -47,7 +32,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         {children}
       </select>
       <div className="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-ink-subtle">
-        <ChevronDown />
+        <ChevronDownIcon />
       </div>
     </div>
   )

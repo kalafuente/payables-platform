@@ -7,6 +7,7 @@ import { BillSummary } from '@/components/bills/detail/bill-summary'
 import { LineItemsCard } from '@/components/bills/detail/line-items-card'
 import { ActivityCard } from '@/components/bills/detail/activity-card'
 import { ActionCard } from '@/components/bills/detail/action-card'
+import { ChevronLeftIcon } from '@/components/icons'
 
 export const dynamic = 'force-dynamic'
 
@@ -91,22 +92,6 @@ export async function generateMetadata({
   return { title: `${bill.vendorName} ${bill.invoiceNumber} — Payables` }
 }
 
-function ChevronLeft() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-3.5"
-    >
-      <path d="M10 3L5 8l5 5" />
-    </svg>
-  )
-}
 
 export default async function BillDetailPage({
   params,
@@ -141,7 +126,7 @@ export default async function BillDetailPage({
         className="group mb-6 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100"
       >
         <span className="transition-transform duration-100 group-hover:-translate-x-0.5">
-          <ChevronLeft />
+          <ChevronLeftIcon className="size-3.5" />
         </span>
         Bills
       </Link>

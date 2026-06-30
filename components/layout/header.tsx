@@ -1,20 +1,6 @@
 'use client'
 
-function MenuIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      aria-hidden="true"
-      className="size-4"
-    >
-      <path d="M2 4h12M2 8h12M2 12h12" />
-    </svg>
-  )
-}
+import { MenuIcon } from '@/components/icons'
 
 interface HeaderProps {
   onToggleSidebar: () => void
@@ -29,7 +15,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
         className="lg:hidden inline-flex items-center justify-center size-8 rounded text-ink-muted hover:bg-slate-100 hover:text-ink transition-colors duration-100"
         aria-label="Open navigation"
       >
-        <MenuIcon />
+        <MenuIcon className="size-4" />
       </button>
 
       {/* User avatar — pushed to the right */}

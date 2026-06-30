@@ -1,6 +1,13 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import {
+  CheckCircleIcon,
+  InfoCircleIcon,
+  WarningTriangleIcon,
+  XCircleIcon,
+  XIcon,
+} from '@/components/icons'
 
 export type ToastVariant = 'success' | 'info' | 'warning' | 'error'
 
@@ -9,98 +16,6 @@ export interface ToastData {
   variant: ToastVariant
   title: string
   description?: string
-}
-
-// ── Icons ────────────────────────────────────────────────────────────────────
-
-function CheckCircleIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <circle cx="8" cy="8" r="6.5" />
-      <path d="M5 8.5 7 10.5 11 6" />
-    </svg>
-  )
-}
-
-function InfoCircleIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <circle cx="8" cy="8" r="6.5" />
-      <path d="M8 5v0" strokeWidth="2.5" />
-      <line x1="8" y1="7.5" x2="8" y2="11" />
-    </svg>
-  )
-}
-
-function WarningTriangleIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M8 3 14 13H2L8 3z" />
-      <line x1="8" y1="7" x2="8" y2="9.5" />
-      <path d="M8 11.5v0" strokeWidth="2.5" />
-    </svg>
-  )
-}
-
-function XCircleIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <circle cx="8" cy="8" r="6.5" />
-      <path d="M6 6l4 4M10 6l-4 4" />
-    </svg>
-  )
-}
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M4 4l8 8M12 4l-8 8" />
-    </svg>
-  )
 }
 
 // ── Variant config ────────────────────────────────────────────────────────────

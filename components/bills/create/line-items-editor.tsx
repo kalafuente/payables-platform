@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/format'
+import { XIcon, PlusIcon } from '@/components/icons'
 
 export interface LineItemDraft {
   id: string
@@ -28,37 +29,6 @@ export function nextLineItemId(): string {
   return `li-${Date.now()}-${++_counter}`
 }
 
-function XIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      aria-hidden="true"
-      className="size-3.5"
-    >
-      <path d="M4 4l8 8M12 4l-8 8" />
-    </svg>
-  )
-}
-
-function PlusIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      aria-hidden="true"
-      className="size-3.5"
-    >
-      <path d="M8 3v10M3 8h10" />
-    </svg>
-  )
-}
 
 const COL = 'grid grid-cols-[1fr_72px_128px_104px_32px] gap-x-3 items-center'
 
@@ -137,7 +107,7 @@ export function LineItemsEditor({ items, onChange }: LineItemsEditorProps) {
                 onClick={() => removeItem(item.id)}
                 className="flex h-9 w-8 items-center justify-center rounded-sm text-ink-subtle hover:text-overdue hover:bg-overdue-bg transition-colors duration-100 cursor-pointer"
               >
-                <XIcon />
+                <XIcon className="size-3.5" />
               </button>
             </div>
           )
@@ -151,7 +121,7 @@ export function LineItemsEditor({ items, onChange }: LineItemsEditorProps) {
           onClick={addItem}
           className="flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100 cursor-pointer"
         >
-          <PlusIcon />
+          <PlusIcon className="size-3.5" />
           Add line item
         </button>
 

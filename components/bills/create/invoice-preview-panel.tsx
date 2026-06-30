@@ -1,24 +1,6 @@
 'use client'
 
-function PdfIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-4 shrink-0 text-ink-subtle"
-    >
-      <path d="M9 1H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5L9 1z" />
-      <polyline points="9 1 9 5 13 5" />
-      <line x1="5" y1="9" x2="11" y2="9" />
-      <line x1="5" y1="12" x2="9" y2="12" />
-    </svg>
-  )
-}
+import { PdfIcon } from '@/components/icons'
 
 interface InvoicePreviewPanelProps {
   onReset: () => void
@@ -30,7 +12,7 @@ export function InvoicePreviewPanel({ onReset }: InvoicePreviewPanelProps) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2 min-w-0">
-          <PdfIcon />
+          <PdfIcon className="size-4 shrink-0 text-ink-subtle" />
           <span className="text-sm font-medium text-ink truncate">
             vercel-invoice-preview.pdf
           </span>

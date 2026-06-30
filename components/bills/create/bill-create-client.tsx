@@ -13,6 +13,7 @@ import { InvoicePreviewPanel } from './invoice-preview-panel'
 import { LineItemsEditor, nextLineItemId, type LineItemDraft } from './line-items-editor'
 import { createBill, updateBill } from '@/app/actions'
 import { useToast } from '@/components/ui/toaster'
+import { ChevronLeftIcon } from '@/components/icons'
 
 interface FormState {
   vendor: string
@@ -45,22 +46,6 @@ const EMPTY_FORM: FormState = {
   memo: '',
 }
 
-function ChevronLeft() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-3.5"
-    >
-      <path d="M10 3L5 8l5 5" />
-    </svg>
-  )
-}
 
 function initialLineItem(): LineItemDraft {
   return { id: nextLineItemId(), description: '', quantity: '1', unitPrice: '' }
@@ -314,7 +299,7 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
         className="group mb-3 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100"
       >
         <span className="transition-transform duration-100 group-hover:-translate-x-0.5">
-          <ChevronLeft />
+          <ChevronLeftIcon className="size-3.5" />
         </span>
         {isEditMode ? 'Bill' : 'Bills'}
       </Link>

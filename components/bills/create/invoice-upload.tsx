@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { cn } from '@/lib/utils'
+import { UploadCloudIcon, CheckIcon } from '@/components/icons'
 
 export interface OCRResult {
   vendor: string
@@ -28,41 +29,6 @@ interface InvoiceUploadProps {
   onExtracted: (data: OCRResult) => void
 }
 
-function UploadIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-8 text-ink-subtle"
-    >
-      <polyline points="16 16 12 12 8 16" />
-      <line x1="12" y1="12" x2="12" y2="21" />
-      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-    </svg>
-  )
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-4 shrink-0"
-    >
-      <path d="M3 8l4 4 6-6" />
-    </svg>
-  )
-}
 
 function LoadingSpinner() {
   return (
@@ -106,7 +72,7 @@ export function InvoiceUpload({ onExtracted }: InvoiceUploadProps) {
       <div className="flex items-center justify-between gap-4 rounded-sm border border-line bg-surface px-4 py-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <span className="text-emerald-600">
-            <CheckIcon />
+            <CheckIcon className="size-4 shrink-0" />
           </span>
           <span className="text-sm font-medium text-ink truncate">{fileName}</span>
           <span className="text-ink-subtle" aria-hidden="true">·</span>
@@ -160,7 +126,7 @@ export function InvoiceUpload({ onExtracted }: InvoiceUploadProps) {
 
       {phase === 'idle' && (
         <div className="flex flex-col items-center gap-3">
-          <UploadIcon />
+          <UploadCloudIcon className="size-8 text-ink-subtle" />
           <div>
             <p className="text-sm font-medium text-ink">Drag &amp; drop invoice</p>
             <p className="mt-0.5 text-sm text-ink-muted">or click to browse</p>
