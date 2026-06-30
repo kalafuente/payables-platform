@@ -6,6 +6,23 @@ A polished Accounts Payable MVP built as a take-home assignment for a Design Eng
 
 The application covers the core AP workflow: receiving invoices, routing them for approval, and tracking payment. Each bill moves through a defined lifecycle:
 
+## Preview
+### Dashboard
+
+![Dashboard](./public/sc1.jpeg)
+
+### Bills
+
+![Bills](./public/sc2.jpeg)
+
+### Bill Details
+
+![Bill Details](./public/sc3.jpeg)
+
+### Create Bill
+
+![Create Bill](./public/sc4.jpeg)
+
 **Draft → Pending Approval → Approved → Scheduled → Paid**
 
 Overdue is a derived state — a bill that reached its due date without being paid. The UI surfaces this without a separate transition.
@@ -138,34 +155,6 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm exec prisma migrate dev` | Create and apply a new migration |
 | `pnpm exec prisma generate` | Regenerate the Prisma client after schema changes |
 | `pnpm exec tsx ./prisma/seed.ts` | Clear and re-seed the database |
-
-## Project Structure
-
-```
-app/
-  (app)/
-    dashboard/       # Dashboard page
-    bills/
-      [id]/          # Bill detail
-        edit/        # Edit (draft only)
-      new/           # Create bill
-  actions.ts         # Server Actions (all mutations)
-
-components/
-  bills/
-    create/          # Create/edit form components
-    detail/          # Bill detail cards
-  dashboard/         # Dashboard widgets
-  ui/                # Design system primitives
-
-prisma/
-  schema.prisma      # Data model
-  seed.ts            # Seed script
-
-lib/
-  db.ts              # Prisma singleton
-  generated/prisma/  # Generated client (do not edit)
-```
 
 ## Scope
 
