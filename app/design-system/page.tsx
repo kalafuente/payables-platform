@@ -1,8 +1,6 @@
 'use client'
 
-/**
- * Internal design system documentation. Not linked from the application.
- */
+// Internal design system reference. Not linked from the app.
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -36,9 +34,6 @@ import {
   UploadCloudIcon,
 } from '@/components/icons'
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Layout primitives
-// ─────────────────────────────────────────────────────────────────────────────
 
 function SectionTitle({
   eyebrow,
@@ -107,9 +102,6 @@ function Row({
   )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Interactive demos
-// ─────────────────────────────────────────────────────────────────────────────
 
 function LoadingDemo({
   variant = 'primary',
@@ -185,9 +177,6 @@ function ToastDemo() {
   )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Foundation data
-// ─────────────────────────────────────────────────────────────────────────────
 
 const colorGroups = [
   {
@@ -254,9 +243,6 @@ const radii = [
   { name: 'full', cls: 'rounded-full' },
 ]
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Motion data
-// ─────────────────────────────────────────────────────────────────────────────
 
 const motionDurations = [
   { name: 'instant', ms: '50 ms',  use: 'State swap — no perceptible motion'        },
@@ -274,9 +260,6 @@ const motionVariants = [
   { name: 'listItem',  use: 'Staggered list rows (staggerChildren: 0.05)'    },
 ]
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Accessibility data
-// ─────────────────────────────────────────────────────────────────────────────
 
 const a11yRows = [
   {
@@ -301,9 +284,6 @@ const a11yRows = [
   },
 ]
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Icons used in the system — imported from @/components/icons
-// ─────────────────────────────────────────────────────────────────────────────
 
 const systemIcons: { name: string; usage: string; icon: React.ReactNode }[] = [
   { name: 'Search',        usage: 'SearchInput',        icon: <SearchIcon className="size-4" /> },
@@ -325,9 +305,6 @@ const systemIcons: { name: string; usage: string; icon: React.ReactNode }[] = [
   { name: 'UploadCloud',   usage: 'Invoice upload',     icon: <UploadCloudIcon className="size-5" /> },
 ]
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Mock data
-// ─────────────────────────────────────────────────────────────────────────────
 
 const lineItems = [
   { description: 'Software infrastructure', qty: 1, amount: 9_800 },
@@ -350,9 +327,6 @@ function usd(n: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Page
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function DesignSystemPage() {
   return (

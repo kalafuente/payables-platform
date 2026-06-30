@@ -14,7 +14,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const ctx = useFormFieldContext()
 
-  // Inside FormField: render bare — the container owns border, bg, and focus ring.
   if (ctx) {
     return (
       <input
@@ -32,7 +31,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     )
   }
 
-  // Standalone: full border, bg, and focus ring.
   return (
     <input
       ref={ref}

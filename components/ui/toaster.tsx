@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { variants } from '@/lib/motion'
 import { Toast, type ToastData, type ToastVariant } from './toast'
 
-// ── Context ───────────────────────────────────────────────────────────────────
 
 export interface AddToastOptions {
   variant: ToastVariant
@@ -25,7 +24,6 @@ export function useToast(): ToastContextValue {
   return ctx
 }
 
-// ── Provider ──────────────────────────────────────────────────────────────────
 
 const DISMISS_AFTER_MS = 4500
 
@@ -46,11 +44,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
 
-      {/*
-        Toast stack — fixed bottom-right, grows upward.
-        pointer-events-none on the container so it never blocks the page;
-        pointer-events-auto is restored on each Toast.
-      */}
+      {/* pointer-events-none keeps the stack from blocking page content; each Toast restores pointer-events-auto */}
       <div
         aria-live="polite"
         aria-label="Notifications"

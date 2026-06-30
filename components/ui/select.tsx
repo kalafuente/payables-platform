@@ -15,7 +15,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
 ) {
   const ctx = useFormFieldContext()
 
-  // Inside FormField: bare select — no border, no bg, chevron repositioned.
   if (ctx) {
     return (
       <div className="relative">
@@ -39,7 +38,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     )
   }
 
-  // Standalone: full border, bg, and focus ring.
   return (
     <div className="relative">
       <select

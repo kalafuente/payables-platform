@@ -33,7 +33,6 @@ export interface BillInitialValues {
 }
 
 interface BillCreateClientProps {
-  // When provided, the component operates in edit mode.
   billId?: string
   initialValues?: BillInitialValues
 }
@@ -175,7 +174,6 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
   // Form fields are shared between both layout branches.
   const formFields = (
     <>
-      {/* Invoice details */}
       <Card className="p-5">
         <h2 className="mb-4 text-sm font-semibold text-ink">Invoice details</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -253,10 +251,8 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
         </div>
       </Card>
 
-      {/* Line items */}
       <LineItemsEditor items={lineItems} onChange={setLineItems} />
 
-      {/* Memo */}
       <Card className="p-5">
         <FormField
           label="Memo"
@@ -273,7 +269,6 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
         </FormField>
       </Card>
 
-      {/* Actions */}
       <div className="flex items-center justify-end gap-2 py-2">
         <Button variant="ghost" onClick={() => router.push(cancelHref)} disabled={isPending}>
           Cancel

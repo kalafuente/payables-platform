@@ -3,10 +3,8 @@
 import { createContext, useContext } from 'react'
 import { cn } from '@/lib/utils'
 
-// ── Context ───────────────────────────────────────────────────────────────────
-// Input and Textarea read this to know they're inside a FormField container
-// and should render without their own border, background, or focus ring.
-
+// Input, Textarea, and Select read this to render without their own border,
+// background, or focus ring when composed inside a FormField container.
 export interface FormFieldContextValue {
   error: boolean
 }
@@ -16,8 +14,6 @@ export const FormFieldContext = createContext<FormFieldContextValue | null>(null
 export function useFormFieldContext() {
   return useContext(FormFieldContext)
 }
-
-// ── FormField ─────────────────────────────────────────────────────────────────
 
 export interface FormFieldProps {
   label: string
@@ -41,8 +37,6 @@ export function FormField({
   return (
     <FormFieldContext.Provider value={{ error: !!error }}>
       <div className={cn('flex flex-col', className)}>
-
-        {/* Single bordered container — focus-within drives the ring */}
         <div
           className={cn(
             'flex flex-col border bg-surface px-3 pt-2 pb-2.5',
@@ -79,7 +73,6 @@ export function FormField({
             {error}
           </p>
         )}
-
       </div>
     </FormFieldContext.Provider>
   )

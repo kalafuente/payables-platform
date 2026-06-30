@@ -18,15 +18,14 @@ function ColGroup() {
 const TOTAL = COL_WIDTHS.length
 
 function cellPadding(i: number) {
-  if (i === 0)           return 'pl-5 lg:pl-8 pr-4'
-  if (i === TOTAL - 1)   return 'pl-4 pr-5 lg:pr-8'
+  if (i === 0) return 'pl-5 lg:pl-8 pr-4'
+  if (i === TOTAL - 1) return 'pl-4 pr-5 lg:pr-8'
   return 'px-4'
 }
 
 function TableRowSkeleton() {
   return (
     <tr className="border-b border-line last:border-0">
-      {/* Vendor — circular avatar + two-line text */}
       <td className={`${cellPadding(0)} py-3 border-r border-line`}>
         <div className="flex items-center gap-3">
           <Skeleton className="size-[36px] shrink-0 rounded-full" />
@@ -36,19 +35,15 @@ function TableRowSkeleton() {
           </div>
         </div>
       </td>
-      {/* Status */}
       <td className={`${cellPadding(1)} py-3 border-r border-line`}>
         <Skeleton className="h-6 w-24 rounded-md" />
       </td>
-      {/* Amount — right-aligned */}
       <td className={`${cellPadding(2)} py-3 text-right border-r border-line`}>
         <Skeleton className="h-3.5 w-16 rounded ml-auto" />
       </td>
-      {/* Due date — right-aligned */}
       <td className={`${cellPadding(3)} py-3 text-right border-r border-line`}>
         <Skeleton className="h-3.5 w-20 rounded ml-auto" />
       </td>
-      {/* Review button */}
       <td className={`${cellPadding(4)} py-3`}>
         <Skeleton className="h-8 w-full rounded-sm" />
       </td>
@@ -64,7 +59,6 @@ export default function BillsLoading() {
       {/* Bills content — mirrors the lg:-mx-8 break-out of the real page */}
       <div className="lg:-mx-8">
 
-        {/* Filter tabs */}
         <div className="flex items-end gap-1 px-2 lg:pl-8 pt-1 border-b border-line overflow-x-auto">
           {[56, 44, 56, 64, 72, 36, 52].map((w, i) => (
             <div key={i} className="px-1 py-2">
@@ -73,17 +67,14 @@ export default function BillsLoading() {
           ))}
         </div>
 
-        {/* Toolbar */}
         <div className="flex items-center gap-4 p-4 lg:px-8 bg-surface-subtle border-b border-line">
           <Skeleton className="h-8 w-64 rounded-full" />
         </div>
 
-        {/* Table */}
         <div className="bg-surface overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[700px]">
 
-              {/* Header */}
               <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
                 <ColGroup />
                 <thead className="border-b border-line">
@@ -107,7 +98,6 @@ export default function BillsLoading() {
                 </thead>
               </table>
 
-              {/* Rows */}
               <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
                 <ColGroup />
                 <tbody>

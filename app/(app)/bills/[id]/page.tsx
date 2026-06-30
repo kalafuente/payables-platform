@@ -120,7 +120,6 @@ export default async function BillDetailPage({
 
   return (
     <div>
-      {/* Back navigation */}
       <Link
         href="/bills"
         className="group mb-6 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors duration-100"
@@ -143,7 +142,6 @@ export default async function BillDetailPage({
 
         <BillSummary bill={bill} />
 
-        {/* Action card: right column, spans all three rows, sticky */}
         <div className="lg:row-span-3 lg:self-start lg:sticky lg:top-8">
           <ActionCard billId={bill.id} status={bill.status} dueDate={bill.dueDate} />
         </div>

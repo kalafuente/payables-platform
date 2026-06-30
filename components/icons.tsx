@@ -1,18 +1,6 @@
-/**
- * Shared icon library.
- *
- * All icons accept an optional `className` prop applied to the <svg> element.
- * Sizing and color are always set by the caller — nothing is hardcoded here.
- * Every icon is aria-hidden by default; label interactive controls at the call site.
- */
-
 interface IconProps {
   className?: string
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 16 × 16  ·  stroke  ·  round caps + joins
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function CheckCircleIcon({ className }: IconProps) {
   return (
@@ -52,7 +40,6 @@ export function XCircleIcon({ className }: IconProps) {
   )
 }
 
-/** Plain ×  — dismiss button, clear input, remove row */
 export function XIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true" className={className}>
@@ -94,7 +81,6 @@ export function PlusIcon({ className }: IconProps) {
   )
 }
 
-/** Simple checkmark without a circle — used for completion states */
 export function CheckIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
@@ -122,7 +108,6 @@ export function MenuIcon({ className }: IconProps) {
   )
 }
 
-/** Dashboard nav icon */
 export function GridIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
@@ -134,7 +119,6 @@ export function GridIcon({ className }: IconProps) {
   )
 }
 
-/** Bills nav icon */
 export function ReceiptIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
@@ -144,11 +128,6 @@ export function ReceiptIcon({ className }: IconProps) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Special — mixed stroke + fill
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Badge status indicator — outer ring stroke + filled dot */
 export function StatusDotIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className={className}>
@@ -157,10 +136,6 @@ export function StatusDotIcon({ className }: IconProps) {
     </svg>
   )
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sort arrows — 6 × 4 viewBox, fill only, used as a pair
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function SortUpIcon({ className }: IconProps) {
   return (
@@ -177,10 +152,6 @@ export function SortDownIcon({ className }: IconProps) {
     </svg>
   )
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 24 × 24
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function UploadCloudIcon({ className }: IconProps) {
   return (

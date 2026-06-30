@@ -9,7 +9,6 @@ interface InvoicePreviewPanelProps {
 export function InvoicePreviewPanel({ onReset }: InvoicePreviewPanelProps) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface">
-      {/* Header */}
       <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2 min-w-0">
           <PdfIcon className="size-4 shrink-0 text-ink-subtle" />
@@ -26,9 +25,6 @@ export function InvoicePreviewPanel({ onReset }: InvoicePreviewPanelProps) {
         </button>
       </div>
 
-      {/* PDF viewer
-          Mobile: fixed 480 px so the preview is readable without dominating the page.
-          Desktop: fills from the sticky top-8 position to near the viewport bottom. */}
       <div className="min-h-0 flex-1">
         <iframe
           src="/vercel-invoice-preview.pdf"

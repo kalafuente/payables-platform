@@ -11,9 +11,6 @@ import { STATUS_LABELS, type BillStatus } from '@/lib/mock-bills'
 import { submitForApproval, approveBill } from '@/app/actions'
 import { useToast } from '@/components/ui/toaster'
 
-// ---------------------------------------------------------------------------
-// Bill Lifecycle
-// ---------------------------------------------------------------------------
 
 const LIFECYCLE_STEPS: { status: BillStatus; label: string }[] = [
   { status: 'draft',     label: 'Draft' },
@@ -75,9 +72,6 @@ function BillLifecycle({ status }: { status: BillStatus }) {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Per-status copy
-// ---------------------------------------------------------------------------
 
 interface Description { state: string; action: string }
 
@@ -116,12 +110,7 @@ function getDescription(status: BillStatus, dueDate: string): Description {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Action configuration
-// Each status maps to at most one primary, one secondary, one destructive.
-// Destructive actions are rendered as plain text — never a styled button.
-// ---------------------------------------------------------------------------
-
+// Destructive actions are plain text — never a styled button.
 interface ActionSet {
   primary?:     string
   secondary?:   string
@@ -137,9 +126,6 @@ const ACTION_SETS: Record<BillStatus, ActionSet> = {
   overdue:   { primary: 'Approve Bill',         secondary: 'Request Changes',    destructive: 'Reject Bill'     },
 }
 
-// ---------------------------------------------------------------------------
-// ActionCard
-// ---------------------------------------------------------------------------
 
 interface ActionCardProps {
   billId: string
@@ -188,7 +174,6 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
   return (
     <Card className="overflow-hidden">
 
-      {/* ── Section 1: Status ─────────────────────────────────────────────── */}
       <div className={cn(
         'px-5 pt-5 pb-5',
         isOverdue && 'bg-overdue-bg',
@@ -203,7 +188,6 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
         <p className="mt-1.5 text-sm text-ink-muted">{desc.action}</p>
       </div>
 
-      {/* ── Section 2: Primary + secondary actions ────────────────────────── */}
       {hasMainActions && (
         <>
           <div className="border-t border-line" />
@@ -235,7 +219,6 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
         </>
       )}
 
-      {/* ── Section 3: Destructive — plain text, never a styled button ─────── */}
       {actions.destructive && (
         <>
           <div className="border-t border-line" />
@@ -251,7 +234,6 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
         </>
       )}
 
-      {/* ── Section 4: Lifecycle ──────────────────────────────────────────── */}
       <div className="border-t border-line" />
       <div className="px-5 py-4">
         <BillLifecycle status={status} />

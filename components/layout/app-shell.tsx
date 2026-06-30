@@ -16,7 +16,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Backdrop — small screens only, dims the page while the sidebar is open */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/30 lg:hidden"

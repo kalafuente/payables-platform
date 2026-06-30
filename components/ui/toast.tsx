@@ -18,8 +18,6 @@ export interface ToastData {
   description?: string
 }
 
-// ── Variant config ────────────────────────────────────────────────────────────
-
 interface VariantConfig {
   Icon: (props: { className?: string }) => React.ReactElement
   iconClass: string
@@ -31,8 +29,6 @@ const variantConfig: Record<ToastVariant, VariantConfig> = {
   warning: { Icon: WarningTriangleIcon, iconClass: 'text-pending'  },
   error:   { Icon: XCircleIcon,        iconClass: 'text-overdue'   },
 }
-
-// ── Toast ─────────────────────────────────────────────────────────────────────
 
 interface ToastProps extends ToastData {
   onDismiss: () => void

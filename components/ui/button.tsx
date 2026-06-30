@@ -77,20 +77,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       aria-disabled={isDisabled}
       aria-busy={loading || undefined}
       className={cn(
-        // Base
         'inline-flex items-center justify-center font-medium select-none whitespace-nowrap',
         // Cursor — pointer on all buttons; not-allowed overrides on disabled
         'cursor-pointer disabled:cursor-not-allowed',
-        // Transition
         'transition-colors duration-100',
         // Focus — accent ring, only visible for keyboard navigation
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
         // Disabled — opacity only; pointer-events stay on so cursor renders correctly
         'disabled:opacity-40',
-        // Variant + size
         variantClasses[variant],
         sizeClasses[size],
-        // Modifiers
         fullWidth && 'w-full',
         className,
       )}
