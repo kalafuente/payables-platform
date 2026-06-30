@@ -143,6 +143,10 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
   const hasMainActions = actions.primary || actions.secondary
   const isOverdue = status === 'overdue'
 
+  function toastOutOfScope() {
+    toast({ variant: 'info', title: 'Not available in this MVP', description: 'This action is intentionally out of scope for the take-home.' })
+  }
+
   function handlePrimary() {
     if (status === 'draft') {
       startTransition(async () => {
@@ -160,12 +164,15 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
       })
       return
     }
+    toastOutOfScope()
   }
 
   function handleSecondary() {
     if (status === 'draft') {
       router.push(`/bills/${billId}/edit`)
+      return
     }
+    toastOutOfScope()
   }
 
   return (
@@ -222,6 +229,7 @@ export function ActionCard({ billId, status, dueDate }: ActionCardProps) {
           <div className="px-5 py-3">
             <button
               type="button"
+              onClick={toastOutOfScope}
               className="cursor-pointer text-sm text-ink-subtle transition-colors duration-100 hover:text-overdue"
             >
               {actions.destructive}
