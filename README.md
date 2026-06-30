@@ -1,6 +1,17 @@
-# Payables Platform
+## Payables Platform
 
 A polished Accounts Payable MVP built as a take-home assignment for a Design Engineer role. The goal is product quality and clean engineering rather than feature completeness — a focused tool that reflects how AP specialists actually work, not a feature checklist.
+
+## Live Demo
+
+- **Application:** https://payables-platform.vercel.app
+- **Design System:** https://payables-platform.vercel.app/design-system
+
+## Design System
+
+The UI is built on a lightweight internal design system composed of reusable primitives (Button, Badge, FormField, Card, Toast, SearchInput, VendorAvatar, etc.). All application screens consume the same components and design tokens, ensuring consistent spacing, typography, color, accessibility, and interaction patterns.
+
+→ [Explore the Design System](https://payables-platform.vercel.app/design-system)
 
 ## Product Overview
 
@@ -8,10 +19,9 @@ The application covers the core AP workflow: receiving invoices, routing them fo
 
 **Draft → Pending Approval → Approved → Scheduled → Paid**
 
-Overdue is a derived state — a bill that reached its due date without being paid. The UI surfaces this without a separate transition.
+Overdue is treated as a separate status surfaced by the UI. In production it would be set automatically by a background job that marks past-due bills; in this MVP it is assigned via the seed data.
 
 Every status change writes an activity entry, so the bill detail page shows a coherent audit trail: who created it, who submitted it, who approved it, and when payment was scheduled or confirmed. This is standard in AP tooling because invoices are financial commitments — the timeline matters for audits and vendor disputes.
-
 
 
 ### Bills
@@ -56,7 +66,7 @@ Scheduled
 Paid
 ```
 
-**Overdue** is a derived state rather than a transition — a bill that reaches its due date without being paid or scheduled. The application surfaces it without requiring an explicit action to move into that state.
+**Overdue** is treated as a separate status rather than a transition. In production it would be set automatically by a scheduled job; in this MVP it is assigned via the seed data and surfaced by the UI without a user-facing action.
 
 ## Workflow Simplification
 
@@ -70,7 +80,7 @@ This MVP intentionally models the complete lifecycle as a single user to keep th
 
 **Client Components only at interaction boundaries.** The bills table is a Client Component because TanStack Table requires client-side state for sorting and filtering. The action card uses `useTransition` to call Server Actions without blocking the UI. Every component above these boundaries remains server-rendered.
 
-**Server Actions own every mutation.** `createBill`, `updateBill`, `submitForApproval`, and `approveBill` are defined in `app/actions.ts` with `'use server'`. Validation and database writes stay on the server; Next.js handles input serialisation automatically. Each action calls `revalidatePath` before `redirect`, so the Bills List, Dashboard, and Bill Detail reflect the change on the next render without a manual refresh.
+**Server Actions own every mutation.** `createBill`, `updateBill`, `submitForApproval`, and `approveBill` are defined in `app/actions.ts` with `'use server'`. Validation and database writes stay on the server; Next.js handles input serialisation automatically. Each action calls `revalidatePath` so the Bills List, Dashboard, and Bill Detail reflect the change as soon as the client navigates or refreshes.
 
 **Prisma domain model: Vendor → Bill → LineItem + ActivityEntry.** Vendor and Bill are separate entities so multiple invoices from the same vendor share a single record rather than repeating name strings. The `(vendorId, invoiceNumber)` unique constraint prevents duplicate invoice entry. LineItem and ActivityEntry both cascade-delete with their parent Bill.
 
@@ -92,7 +102,7 @@ This MVP intentionally models the complete lifecycle as a single user to keep th
 | Table | TanStack Table | Bills list with sorting, filtering, and search |
 | Animation | Framer Motion | Subtle interactions only |
 
-Server Actions handle all mutations (`createBill`, `updateBill`, `submitForApproval`, `approveBill`). Each action revalidates the affected paths before redirecting, so the Bills List, Dashboard, and Bill Detail all reflect the change immediately.
+Server Actions handle all mutations (`createBill`, `updateBill`, `submitForApproval`, `approveBill`). Each action calls `revalidatePath` on the affected routes; the client navigates after the action completes, so the Bills List, Dashboard, and Bill Detail all reflect the change immediately.
 
 ## Getting Started
 
@@ -150,6 +160,7 @@ Open [http://localhost:3000](http://localhost:3000).
 This is an intentionally focused MVP. The following are out of scope and not implemented:
 
 - Authentication and user roles
+- Automatic overdue detection (in production a background job would mark past-due bills; here the status is set by the seed)
 - Payment scheduling UI (the status exists in the data model; the scheduling action is a placeholder)
 - Reject and Request Changes approval actions
 - Real OCR (the upload step simulates extraction with mock data)
