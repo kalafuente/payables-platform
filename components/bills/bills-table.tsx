@@ -106,7 +106,7 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
                       'py-2.5 text-xs font-medium text-ink-muted',
                       thPadding(i, arr.length),
                       alignRight ? 'text-right' : 'text-left',
-                      !isLast && 'border-r border-line',
+                      !isLast && ('border-r border-line'),
                     )}
                   >
                     {header.isPlaceholder ? null : canSort ? (
@@ -158,7 +158,7 @@ export function BillsTable({ bills, animationKey }: BillsTableProps) {
                       'py-3 text-sm',
                       tdPadding(i, arr.length),
                       cell.column.columnDef.meta?.align === 'right' && 'text-right',
-                      !isLast && 'border-r border-line',
+                      !isLast && ('border-r border-line'),
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -69,19 +69,16 @@ export const columns: ColumnDef<Bill>[] = [
   },
   {
     id: 'actions',
-    header: '',
+    header: 'Actions',
     enableSorting: false,
     cell: ({ row }) => (
       // stopPropagation prevents the tr onClick from double-firing when
       // the user clicks the Review link — both go to the same URL anyway.
-      <div
-        className="flex justify-end"
-        onClick={e => e.stopPropagation()}
-      >
+      <div onClick={e => e.stopPropagation()}>
         <Link
           href={`/bills/${row.original.id}`}
           tabIndex={-1}
-          className="inline-flex items-center justify-center h-8 px-3 text-xs font-medium select-none whitespace-nowrap rounded-sm bg-surface text-ink border border-line hover:bg-canvas hover:border-line-strong transition-colors duration-100 cursor-pointer"
+          className="w-full inline-flex items-center justify-center h-8 text-xs font-medium select-none whitespace-nowrap rounded-sm bg-surface text-ink border border-line hover:bg-canvas hover:border-line-strong transition-colors duration-100 cursor-pointer"
         >
           Review
         </Link>

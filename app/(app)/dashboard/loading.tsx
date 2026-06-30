@@ -1,18 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
-
-// ── Shared pieces ─────────────────────────────────────────────────────────────
-
-function PageHeaderSkeleton() {
-  return (
-    <div className="flex items-start justify-between gap-4 mb-5">
-      <div>
-        <Skeleton className="h-12 w-36 " />
-        <Skeleton className="mt-2 h-3.5 w-48 rounded" />
-      </div>
-      <Skeleton className="h-9 w-28 rounded" />
-    </div>
-  )
-}
+import { PageHeaderSkeleton } from '@/components/ui/page-header-skeleton'
 
 // ── Metric cards ──────────────────────────────────────────────────────────────
 

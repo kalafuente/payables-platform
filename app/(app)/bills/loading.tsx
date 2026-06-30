@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
+import { PageHeaderSkeleton } from '@/components/ui/page-header-skeleton'
 
 // Must stay in sync with bills-table.tsx COL_WIDTHS
 const COL_WIDTHS = ['37%', '18%', '15%', '16%', '14%']
@@ -48,8 +49,8 @@ function TableRowSkeleton() {
         <Skeleton className="h-3.5 w-20 rounded ml-auto" />
       </td>
       {/* Review button */}
-      <td className={`${cellPadding(4)} py-3 text-right`}>
-        <Skeleton className="h-8 w-[68px] rounded-sm ml-auto" />
+      <td className={`${cellPadding(4)} py-3`}>
+        <Skeleton className="h-8 w-full rounded-sm" />
       </td>
     </tr>
   )
@@ -58,14 +59,7 @@ function TableRowSkeleton() {
 export default function BillsLoading() {
   return (
     <>
-      {/* Page header */}
-      <div className="flex items-start justify-between gap-4 mb-5">
-        <div>
-          <Skeleton className="h-12 w-20" />
-          <Skeleton className="mt-2 h-3.5 w-52 rounded" />
-        </div>
-        <Skeleton className="h-9 w-28 rounded" />
-      </div>
+      <PageHeaderSkeleton actionWidth={112} />
 
       {/* Bills content — mirrors the lg:-mx-8 break-out of the real page */}
       <div className="lg:-mx-8">
@@ -106,7 +100,9 @@ export default function BillsLoading() {
                     <th className={`${cellPadding(3)} py-2.5 text-right border-r border-line`}>
                       <Skeleton className="h-3 w-14 rounded ml-auto" />
                     </th>
-                    <th className={`${cellPadding(4)} py-2.5`} />
+                    <th className={`${cellPadding(4)} py-2.5 text-left`}>
+                      <Skeleton className="h-3 w-12 rounded" />
+                    </th>
                   </tr>
                 </thead>
               </table>
