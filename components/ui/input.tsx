@@ -2,6 +2,7 @@
 
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
+import { useFormFieldContext } from './form-field'
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean
@@ -11,19 +12,39 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   { className, error, ...props },
   ref,
 ) {
+  const ctx = useFormFieldContext()
+
+  // Inside FormField: render bare — the container owns border, bg, and focus ring.
+  if (ctx) {
+    return (
+      <input
+        ref={ref}
+        aria-invalid={ctx.error || undefined}
+        className={cn(
+          'w-full bg-transparent text-sm text-ink',
+          'placeholder:text-ink-subtle',
+          'focus:outline-none',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          className,
+        )}
+        {...props}
+      />
+    )
+  }
+
+  // Standalone: full border, bg, and focus ring.
   return (
     <input
       ref={ref}
       aria-invalid={error || undefined}
       className={cn(
-        'h-9 w-full rounded-sm border bg-surface px-3 text-sm text-ink',
+        'h-9 w-full border bg-surface px-3 text-sm text-ink',
         'placeholder:text-ink-subtle',
-        'focus:outline-none focus:ring-2 focus:ring-accent',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'transition-colors duration-100',
         error
-          ? 'border-overdue focus:border-overdue'
-          : 'border-line focus:border-line-strong',
+          ? 'border-overdue'
+          : 'border-line',
         className,
       )}
       {...props}

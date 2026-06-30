@@ -2,9 +2,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 function FormFieldSkeleton() {
   return (
-    <div className="space-y-1.5">
-      <Skeleton className="h-3.5 w-20 rounded" />
-      <Skeleton className="h-10 w-full rounded" />
+    <div className="rounded-sm border border-line px-3 pt-2 pb-2.5 flex flex-col gap-1.5">
+      <Skeleton className="h-2.5 w-20 rounded" />
+      <Skeleton className="h-4 w-2/3 rounded" />
     </div>
   )
 }
