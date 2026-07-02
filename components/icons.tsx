@@ -171,3 +171,14 @@ export function SpinnerIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+export function BuildingIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
+      <rect x="1.5" y="4.5" width="13" height="10" rx="0.75" />
+      <path d="M1.5 8h13" />
+      <path d="M5.5 4.5V2M10.5 4.5V2" />
+      <rect x="6" y="10.5" width="4" height="4" rx="0.5" />
+    </svg>
+  )
+}

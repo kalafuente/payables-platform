@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatDate } from '@/lib/format'
@@ -15,11 +16,18 @@ function Label({ children }: { children: React.ReactNode }) {
   )
 }
 
-function IdentityRow({ vendorName, invoiceNumber }: { vendorName: string; invoiceNumber: string }) {
+function IdentityRow({ vendorId, vendorName, invoiceNumber }: { vendorId: string; vendorName: string; invoiceNumber: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-xl font-semibold text-ink leading-tight">{vendorName}</h1>
+        <Link
+          href={`/vendors/${vendorId}`}
+          className="group inline-flex items-baseline gap-0"
+        >
+          <h1 className="text-xl font-semibold text-ink leading-tight group-hover:text-ink-muted transition-colors duration-100">
+            {vendorName}
+          </h1>
+        </Link>
         <p className="mt-0.5 text-sm font-mono text-ink-muted">{invoiceNumber}</p>
       </div>
     </div>
@@ -60,7 +68,7 @@ export function BillSummary({ bill }: BillSummaryProps) {
 
   return (
     <Card className="p-6">
-      <IdentityRow vendorName={bill.vendorName} invoiceNumber={bill.invoiceNumber} />
+      <IdentityRow vendorId={bill.vendorId} vendorName={bill.vendorName} invoiceNumber={bill.invoiceNumber} />
       <AmountSection amount={bill.amount} />
       <DatesSection invoiceDate={bill.invoiceDate} dueDate={bill.dueDate} isOverdue={isOverdue} />
     </Card>

@@ -56,6 +56,37 @@ export interface ActivityFeedEntry extends ActivityEntry {
 }
 
 export interface BillDetail extends Bill {
+  vendorId: string
   lineItems: LineItem[]
   activity: ActivityEntry[]
+}
+
+export interface VendorOption {
+  id: string
+  name: string
+  email: string | null
+}
+
+export interface Vendor {
+  id: string
+  name: string
+  billCount: number
+  outstandingAmount: number
+  lastInvoiceDate: string | null
+}
+
+export interface VendorActivityEntry extends ActivityEntry {
+  billId: string
+  invoiceNumber: string
+}
+
+export interface VendorDetail {
+  id: string
+  name: string
+  email: string | null
+  createdAt: string
+  outstandingBalance: number
+  totalBills: number
+  bills: Bill[]
+  recentActivity: VendorActivityEntry[]
 }

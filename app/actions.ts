@@ -3,9 +3,10 @@
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
 import { Prisma } from '@/lib/generated/prisma/client'
+import type { VendorOption } from '@/lib/mock-bills'
 
 export interface CreateBillInput {
-  vendorName: string
+  vendorId: string
   invoiceNumber: string
   invoiceDate: string // 'YYYY-MM-DD'
   dueDate: string     // 'YYYY-MM-DD'
@@ -21,13 +22,52 @@ export interface ActionResult {
   error?: string
 }
 
+export interface VendorResult {
+  vendor?: VendorOption
+  error?: string
+}
+
+export async function createVendor(input: { name: string; email: string }): Promise<VendorResult> {
+  try {
+    const vendor = await db.vendor.create({
+      data: {
+        name:  input.name.trim(),
+        email: input.email.trim() || undefined,
+      },
+      select: { id: true, name: true, email: true },
+    })
+    revalidatePath('/vendors')
+    return { vendor }
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      return { error: 'A vendor with this name already exists.' }
+    }
+    throw err
+  }
+}
+
+export async function updateVendor(id: string, input: { name: string; email: string }): Promise<ActionResult> {
+  try {
+    await db.vendor.update({
+      where: { id },
+      data: {
+        name:  input.name.trim(),
+        email: input.email.trim() || null,
+      },
+    })
+    revalidatePath('/vendors')
+    revalidatePath(`/vendors/${id}`)
+    return {}
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      return { error: 'A vendor with this name already exists.' }
+    }
+    throw err
+  }
+}
+
 export async function createBill(input: CreateBillInput): Promise<ActionResult> {
   try {
-    let vendor = await db.vendor.findFirst({ where: { name: input.vendorName } })
-    if (!vendor) {
-      vendor = await db.vendor.create({ data: { name: input.vendorName } })
-    }
-
     const validItems = input.lineItems.filter(li => li.description.trim())
 
     // Integer arithmetic avoids IEEE 754 drift on monetary values.
@@ -38,7 +78,7 @@ export async function createBill(input: CreateBillInput): Promise<ActionResult> 
 
     const bill = await db.bill.create({
       data: {
-        vendorId:      vendor.id,
+        vendorId:      input.vendorId,
         invoiceNumber: input.invoiceNumber,
         invoiceDate:   new Date(`${input.invoiceDate}T12:00:00Z`),
         dueDate:       new Date(`${input.dueDate}T12:00:00Z`),
@@ -102,11 +142,6 @@ export async function submitForApproval(billId: string): Promise<void> {
 
 export async function updateBill(billId: string, input: CreateBillInput): Promise<ActionResult> {
   try {
-    let vendor = await db.vendor.findFirst({ where: { name: input.vendorName } })
-    if (!vendor) {
-      vendor = await db.vendor.create({ data: { name: input.vendorName } })
-    }
-
     const validItems = input.lineItems.filter(li => li.description.trim())
     const totalCents = validItems.reduce(
       (sum, li) => sum + Math.round(li.quantity * li.unitPrice * 100),
@@ -116,7 +151,7 @@ export async function updateBill(billId: string, input: CreateBillInput): Promis
     await db.bill.update({
       where: { id: billId },
       data: {
-        vendorId:      vendor.id,
+        vendorId:      input.vendorId,
         invoiceNumber: input.invoiceNumber,
         invoiceDate:   new Date(`${input.invoiceDate}T12:00:00Z`),
         dueDate:       new Date(`${input.dueDate}T12:00:00Z`),

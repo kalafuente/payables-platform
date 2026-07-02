@@ -8,15 +8,17 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { FormField } from '@/components/ui/form-field'
+import { VendorSelector } from '@/components/vendors/vendor-selector'
+import { VendorFormDialog } from '@/components/vendors/vendor-form-dialog'
 import { InvoiceUpload, type OCRResult } from './invoice-upload'
 import { InvoicePreviewPanel } from './invoice-preview-panel'
 import { LineItemsEditor, nextLineItemId, type LineItemDraft } from './line-items-editor'
 import { createBill, updateBill } from '@/app/actions'
 import { useToast } from '@/components/ui/toaster'
 import { ChevronLeftIcon } from '@/components/icons'
+import type { VendorOption } from '@/lib/mock-bills'
 
 interface FormState {
-  vendor: string
   invoiceNumber: string
   invoiceDate: string
   dueDate: string
@@ -24,7 +26,6 @@ interface FormState {
 }
 
 export interface BillInitialValues {
-  vendor: string
   invoiceNumber: string
   invoiceDate: string
   dueDate: string
@@ -35,22 +36,27 @@ export interface BillInitialValues {
 interface BillCreateClientProps {
   billId?: string
   initialValues?: BillInitialValues
+  vendors: VendorOption[]
+  initialVendor?: VendorOption
 }
 
 const EMPTY_FORM: FormState = {
-  vendor: '',
   invoiceNumber: '',
   invoiceDate: '',
   dueDate: '',
   memo: '',
 }
 
-
 function initialLineItem(): LineItemDraft {
   return { id: nextLineItemId(), description: '', quantity: '1', unitPrice: '' }
 }
 
-export function BillCreateClient({ billId, initialValues }: BillCreateClientProps = {}) {
+export function BillCreateClient({
+  billId,
+  initialValues,
+  vendors,
+  initialVendor,
+}: BillCreateClientProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const isEditMode = !!billId
@@ -58,11 +64,10 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
   const [form, setForm] = useState<FormState>(
     initialValues
       ? {
-        vendor: initialValues.vendor,
         invoiceNumber: initialValues.invoiceNumber,
-        invoiceDate: initialValues.invoiceDate,
-        dueDate: initialValues.dueDate,
-        memo: initialValues.memo,
+        invoiceDate:   initialValues.invoiceDate,
+        dueDate:       initialValues.dueDate,
+        memo:          initialValues.memo,
       }
       : EMPTY_FORM
   )
@@ -72,6 +77,14 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
       ? initialValues.lineItems
       : [initialLineItem()]
   )
+
+  const [selectedVendor, setSelectedVendor] = useState<VendorOption | null>(initialVendor ?? null)
+  const [localVendors, setLocalVendors]     = useState<VendorOption[]>(vendors)
+  const [vendorSearchHint, setVendorSearchHint] = useState('')
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [createVendorName, setCreateVendorName] = useState('')
+  // Increment to remount VendorFormDialog with fresh state each time it opens
+  const [dialogKey, setDialogKey] = useState(0)
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [hasPreview, setHasPreview] = useState(false)
@@ -84,19 +97,49 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
     if (errors[field]) setErrors(e => { const next = { ...e }; delete next[field]; return next })
   }
 
+  function handleVendorChange(v: VendorOption | null) {
+    setSelectedVendor(v)
+    if (v && errors.vendor) setErrors(e => { const next = { ...e }; delete next.vendor; return next })
+  }
+
+  function handleRequestCreate(searchText: string) {
+    setCreateVendorName(searchText)
+    setDialogKey(k => k + 1)
+    setCreateDialogOpen(true)
+  }
+
+  function handleVendorCreated(vendor: VendorOption) {
+    setLocalVendors(prev =>
+      [...prev, vendor].sort((a, b) => a.name.localeCompare(b.name))
+    )
+    setSelectedVendor(vendor)
+    setVendorSearchHint('')
+    if (errors.vendor) setErrors(e => { const next = { ...e }; delete next.vendor; return next })
+  }
+
   function handleExtracted(data: OCRResult) {
+    // Try to match the OCR vendor name to an existing vendor (case-insensitive)
+    const match = localVendors.find(
+      v => v.name.toLowerCase() === data.vendor.trim().toLowerCase()
+    )
+    if (match) {
+      setSelectedVendor(match)
+      setVendorSearchHint('')
+    } else {
+      setVendorSearchHint(data.vendor)
+    }
+
     setForm(f => ({
       ...f,
-      vendor: data.vendor,
       invoiceNumber: data.invoiceNumber,
-      invoiceDate: data.invoiceDate,
-      dueDate: data.dueDate,
+      invoiceDate:   data.invoiceDate,
+      dueDate:       data.dueDate,
     }))
     setLineItems(data.lineItems.map(item => ({
-      id: nextLineItemId(),
+      id:          nextLineItemId(),
       description: item.description,
-      quantity: item.quantity,
-      unitPrice: item.unitPrice,
+      quantity:    item.quantity,
+      unitPrice:   item.unitPrice,
     })))
     setErrors({})
     setHasPreview(true)
@@ -109,35 +152,35 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
 
   function validate(): Record<string, string> {
     const errs: Record<string, string> = {}
-    if (!form.vendor.trim()) errs.vendor = 'Vendor name is required.'
+    if (!selectedVendor)            errs.vendor        = 'Please select or create a vendor.'
     if (!form.invoiceNumber.trim()) errs.invoiceNumber = 'Invoice number is required.'
-    if (!form.invoiceDate) errs.invoiceDate = 'Invoice date is required.'
-    if (!form.dueDate) errs.dueDate = 'Due date is required.'
+    if (!form.invoiceDate)          errs.invoiceDate   = 'Invoice date is required.'
+    if (!form.dueDate)              errs.dueDate       = 'Due date is required.'
     return errs
   }
 
   function buildInput(applyDefaults: boolean) {
     const today = new Date().toISOString().slice(0, 10)
     return {
-      vendorName: applyDefaults ? (form.vendor.trim() || 'Unnamed vendor') : form.vendor.trim(),
-      invoiceNumber: applyDefaults ? (form.invoiceNumber.trim() || `DRAFT-${Date.now()}`) : form.invoiceNumber.trim(),
+      vendorId:      selectedVendor!.id,
+      invoiceNumber: applyDefaults
+        ? (form.invoiceNumber.trim() || `DRAFT-${Date.now()}`)
+        : form.invoiceNumber.trim(),
       invoiceDate: form.invoiceDate || (applyDefaults ? today : ''),
-      dueDate: form.dueDate || (applyDefaults ? today : ''),
-      memo: form.memo.trim(),
-      lineItems: lineItems.map(li => ({
+      dueDate:     form.dueDate     || (applyDefaults ? today : ''),
+      memo:        form.memo.trim(),
+      lineItems:   lineItems.map(li => ({
         description: li.description,
-        quantity: parseFloat(li.quantity) || 0,
-        unitPrice: parseFloat(li.unitPrice) || 0,
+        quantity:    parseFloat(li.quantity) || 0,
+        unitPrice:   parseFloat(li.unitPrice) || 0,
       })),
     }
   }
 
   function handleSave() {
     const errs = validate()
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs)
-      return
-    }
+    if (Object.keys(errs).length > 0) { setErrors(errs); return }
+
     startTransition(async () => {
       if (isEditMode) {
         const result = await updateBill(billId!, buildInput(false))
@@ -160,18 +203,21 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
   }
 
   function handleSaveDraft() {
+    if (!selectedVendor) {
+      setErrors({ vendor: 'Please select or create a vendor.' })
+      return
+    }
     startTransition(async () => {
       const result = await createBill(buildInput(true))
       if (result?.error) {
         toast({ variant: 'error', title: 'Could not create bill', description: result.error })
         return
       }
-      toast({ variant: 'success', title: 'Bill created', description: 'The invoice has been saved as a draft.' })
+      toast({ variant: 'success', title: 'Draft saved', description: 'Your draft bill has been saved.' })
       router.push('/bills')
     })
   }
 
-  // Form fields are shared between both layout branches.
   const formFields = (
     <>
       <Card className="p-5">
@@ -179,19 +225,18 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             label="Vendor"
-            htmlFor="vendor"
+            htmlFor="vendor-selector"
             required
             error={errors.vendor}
+            className="sm:col-span-2"
           >
-            <Input
-              id="vendor"
-              value={form.vendor}
-              onChange={e => setField('vendor', e.target.value)}
-              error={!!errors.vendor}
-              placeholder="e.g. Stripe, Inc."
+            <VendorSelector
+              vendors={localVendors}
+              value={selectedVendor}
+              onChange={handleVendorChange}
+              onRequestCreate={handleRequestCreate}
+              searchHint={vendorSearchHint}
               disabled={isPending}
-              aria-required="true"
-              aria-describedby={errors.vendor ? 'vendor-error' : undefined}
             />
           </FormField>
 
@@ -284,6 +329,14 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
             : (isEditMode ? 'Save Changes' : 'Create Bill')}
         </Button>
       </div>
+
+      <VendorFormDialog
+        key={dialogKey}
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        onSaved={(v) => { handleVendorCreated(v); setCreateDialogOpen(false) }}
+        initialName={createVendorName}
+      />
     </>
   )
 
@@ -304,12 +357,10 @@ export function BillCreateClient({ billId, initialValues }: BillCreateClientProp
       </h1>
 
       {isEditMode ? (
-        /* Edit mode: single-column, no upload panel */
         <div className="space-y-4">
           {formFields}
         </div>
       ) : (
-        /* Create mode: always two-column — left panel switches between upload zone and PDF preview */
         <div className="flex flex-col gap-6 lg:flex-row">
           <div className="shrink-0 lg:sticky lg:top-8 lg:w-[44%] h-[480px] lg:h-auto lg:min-h-0">
             {hasPreview ? (

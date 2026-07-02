@@ -23,7 +23,7 @@ const getBillDetail = cache(async (id: string): Promise<BillDetail | null> => {
       dueDate:       true,
       amount:        true,
       status:        true,
-      vendor:        { select: { name: true } },
+      vendor:        { select: { id: true, name: true } },
       lineItems: {
         select: {
           id:          true,
@@ -56,6 +56,7 @@ const getBillDetail = cache(async (id: string): Promise<BillDetail | null> => {
 
   return {
     id:            row.id,
+    vendorId:      row.vendor.id,
     vendorName:    row.vendor.name,
     invoiceNumber: row.invoiceNumber,
     invoiceDate:   toDateStr(row.invoiceDate),

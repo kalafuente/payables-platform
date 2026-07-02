@@ -2,11 +2,12 @@
 
 import { cn } from '@/lib/utils'
 import { NavItem } from './nav-item'
-import { GridIcon, ReceiptIcon } from '@/components/icons'
+import { GridIcon, ReceiptIcon, BuildingIcon } from '@/components/icons'
 
 const navigation = [
   { href: '/dashboard', label: 'Dashboard', icon: <GridIcon /> },
   { href: '/bills', label: 'Bills', icon: <ReceiptIcon /> },
+  { href: '/vendors', label: 'Vendors', icon: <BuildingIcon /> },
 ]
 
 interface SidebarProps {

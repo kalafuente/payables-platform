@@ -16,7 +16,7 @@ const getBillForEdit = cache(async (id: string) => {
       invoiceDate:   true,
       dueDate:       true,
       memo:          true,
-      vendor:        { select: { name: true } },
+      vendor:        { select: { id: true, name: true, email: true } },
       lineItems: {
         select: { id: true, description: true, quantity: true, unitPrice: true },
         orderBy: { sortOrder: 'asc' },
@@ -47,14 +47,20 @@ export default async function EditBillPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const bill = await getBillForEdit(id)
+
+  const [bill, vendors] = await Promise.all([
+    getBillForEdit(id),
+    db.vendor.findMany({
+      select:  { id: true, name: true, email: true },
+      orderBy: { name: 'asc' },
+    }),
+  ])
 
   if (!bill) notFound()
   // Non-draft bills are read-only — redirect to detail page.
   if (bill.status !== 'draft') redirect(`/bills/${id}`)
 
   const initialValues = {
-    vendor:        bill.vendor.name,
     invoiceNumber: bill.invoiceNumber,
     invoiceDate:   toDateStr(bill.invoiceDate),
     dueDate:       toDateStr(bill.dueDate),
@@ -67,5 +73,18 @@ export default async function EditBillPage({
     })),
   }
 
-  return <BillCreateClient billId={id} initialValues={initialValues} />
+  const initialVendor = {
+    id:    bill.vendor.id,
+    name:  bill.vendor.name,
+    email: bill.vendor.email,
+  }
+
+  return (
+    <BillCreateClient
+      billId={id}
+      initialValues={initialValues}
+      vendors={vendors}
+      initialVendor={initialVendor}
+    />
+  )
 }
