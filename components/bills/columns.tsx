@@ -1,11 +1,11 @@
 'use client'
 
-import Link from 'next/link'
 import type { ColumnDef, RowData } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { VendorAvatar } from '@/components/ui/vendor-avatar'
 import { type Bill, STATUS_LABELS } from '@/lib/mock-bills'
 import { formatCurrency, formatDate } from '@/lib/format'
+import { ReviewButton } from '../dashboard/review-button'
 
 // Extend TanStack column meta to carry per-column alignment
 declare module '@tanstack/react-table' {
@@ -75,13 +75,7 @@ export const columns: ColumnDef<Bill>[] = [
       // stopPropagation prevents the tr onClick from double-firing when
       // the user clicks the Review link — both go to the same URL anyway.
       <div onClick={e => e.stopPropagation()}>
-        <Link
-          href={`/bills/${row.original.id}`}
-          tabIndex={-1}
-          className="w-full inline-flex items-center justify-center h-8 text-xs font-medium select-none whitespace-nowrap rounded-sm bg-surface text-ink border border-line hover:bg-canvas hover:border-line-strong transition-colors duration-100 cursor-pointer"
-        >
-          Review
-        </Link>
+        <ReviewButton href={`/bills/${row.original.id}`} />
       </div>
     ),
   },
